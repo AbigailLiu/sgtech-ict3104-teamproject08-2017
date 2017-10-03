@@ -2,6 +2,8 @@ package com.lifestyle.stps.Controllers;
 
 import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.services.ProductService;
+import com.lifestyle.stps.entities.User;
+import com.lifestyle.stps.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,21 +18,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class IndexController {
 
     private ProductService productService;
+    private UserService userService;
 
     @Autowired
     public void setProductService(ProductService productService){
         this.productService = productService;
     }
 
-    @RequestMapping("/")
-    String index(){
-        return "index";
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
     }
 
+
+    @RequestMapping("/")
+    String index(){ return "index"; }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(){
-        return "login";
-    }
+    public String login(){ return "login"; }
 
     @RequestMapping("product/new")
     public String newProduct(Model model){
@@ -71,4 +76,30 @@ public class IndexController {
         productService.deleteProduct(id);
         return "redirect:/products";
     }
+
+    @RequestMapping("user/new")
+    public String newUser(Model model){
+        model.addAttribute("user", new User());
+        return "usercreateform";
+    }
+
+    @RequestMapping(value = "user", method = RequestMethod.POST)
+    public String saveUser(User user){
+        userService.createUser(user);
+        return "redirect:/user/" + user.getId();
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public String listUsers(Model model){
+        model.addAttribute("users", userService.listAllNonAdmins());
+        return "userform";
+    }
+    /*
+    @RequestMapping("user/delete/{id}")
+    public String edit(@PathVariable Integer id, Model model){
+        userService.deleteUser(id);
+        return "redirect:/userform";
+    }*/
+
+
 }
