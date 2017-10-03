@@ -2,8 +2,10 @@ package com.lifestyle.stps.ApplicationLoader;
 
 
 import com.lifestyle.stps.Repositories.ProductRepository;
+import com.lifestyle.stps.Repositories.TrainingTypeRepository;
 import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.entities.Role;
+import com.lifestyle.stps.entities.TrainingType;
 import com.lifestyle.stps.entities.User;
 import com.lifestyle.stps.services.RoleService;
 import com.lifestyle.stps.services.UserService;
@@ -22,6 +24,7 @@ import java.util.List;
 @Component
 public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     private ProductRepository productRepository;
+    private TrainingTypeRepository trainingTypeRepo;
     private UserService userService;
     private RoleService roleService;
 
@@ -31,6 +34,13 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     public void setProductRepository(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
+
+    //For Training Type
+    @Autowired
+    public void setTrainingTypeRepository(TrainingTypeRepository trainingTypeRepo) {
+        this.trainingTypeRepo = trainingTypeRepo;
+    }
+
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -50,6 +60,7 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         loadRoles();
         assignUsersToUserRole();
         assignUsersToAdminRole();
+        //loadTrainingType();
     }
 
     private void loadProducts() {
@@ -124,5 +135,13 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
                 });
             }
         });
+    }
+
+    //Locad Training Type
+    private void loadTrainingType() {
+        TrainingType tt1 = new TrainingType();
+        tt1.setType("Testing 1");
+        trainingTypeRepo.save(tt1);
+        log.info("Saved Training Type - id: " + tt1.getId());
     }
 }

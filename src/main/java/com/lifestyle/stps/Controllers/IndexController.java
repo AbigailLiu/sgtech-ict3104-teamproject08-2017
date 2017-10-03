@@ -1,7 +1,9 @@
 package com.lifestyle.stps.Controllers;
 
 import com.lifestyle.stps.entities.Product;
+import com.lifestyle.stps.entities.TrainingType;
 import com.lifestyle.stps.services.ProductService;
+import com.lifestyle.stps.services.TrainingTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,10 +19,19 @@ public class IndexController {
 
     private ProductService productService;
 
+    //Training Type
+    private TrainingTypeService TTypeService;
+
     @Autowired
     public void setProductService(ProductService productService){
         this.productService = productService;
     }
+
+    @Autowired
+    public void setTrainingTypeService(TrainingTypeService trainingTypeService){
+        this.TTypeService = trainingTypeService;
+    }
+
 
     @RequestMapping("/")
     String index(){
@@ -71,4 +82,35 @@ public class IndexController {
         productService.deleteProduct(id);
         return "redirect:/products";
     }
+
+    //For Listing all Training Type
+    @RequestMapping(value = "/trainingTypes", method = RequestMethod.GET)
+    public String listTT(Model model){
+        model.addAttribute("trainType", TTypeService.listAllTType());
+        return "trainingTypeShow";
+    }
+
+    //For Add Training Type
+    @RequestMapping("trainingType/new")
+    public String newTrainingType(Model model){
+        model.addAttribute("trainType", new TrainingType());
+        return "addTrainingType";
+    }
+
+    @RequestMapping(value = "trainType", method = RequestMethod.POST)
+    public String addTrainingType(TrainingType trainingType){
+
+        TTypeService.saveTrainingType(trainingType);
+
+        return "redirect:/trainType/" + trainingType.getId();
+    }
+
+    @RequestMapping("trainType/{id}")
+    public String showTrainingType(@PathVariable Integer id, Model model){
+        model.addAttribute("trainType", TTypeService.getTrainingTypeID(id));
+        return "trainingTypeShow";
+    }
+
+
+
 }
