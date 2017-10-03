@@ -95,8 +95,8 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         userService.saveOrUpdate(user2);
 
         User user3 = new User();
-        user3.setUsername("trainee1");
-        user3.setPassword("trainee1");
+        user3.setUsername("trainer1");
+        user3.setPassword("trainer1");
         userService.saveOrUpdate(user3);
 
     }
@@ -127,7 +127,7 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
                         user.addRole(role);
                         userService.saveOrUpdate(user);
                     }
-                    if (user.getUsername().equals("trainee1")) {
+                    if (user.getUsername().equals("trainer")) {
                         user.addRole(role);
                         userService.saveOrUpdate(user);
                     }
