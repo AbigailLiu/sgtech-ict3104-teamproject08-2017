@@ -18,6 +18,18 @@ public class User extends AbstractDomainClass {
     private String encryptedPassword;
     private Boolean enabled = true;
 
+    private String email;
+    private String firstName;
+    private String lastName;
+    private int day;
+    private int month;
+    private int year;
+    private int phoneNumber;
+    private String gender;
+    private String country;
+    private String homeAddress;
+    private int postalCode;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
     // ~ defaults to @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "user_id"),
@@ -57,6 +69,49 @@ public class User extends AbstractDomainClass {
         this.enabled = enabled;
     }
 
+    public String getEmail(){ return email;}
+
+    public void setEmail(String email){ this.email = email; }
+
+    public String getFirstName(){ return firstName; }
+
+    public void setFirstName(String firstName){ this.firstName = firstName; }
+
+    public String getLastName(){ return lastName; }
+
+    public void setLastName(String lastName){ this.lastName = lastName; }
+
+    public int getDay(){ return day; }
+
+    public void setDay(int day){ this.day = day; }
+
+    public int getMonth(){ return month; }
+
+    public void setMonth(int month){ this.month = month; }
+
+    public int getYear(){ return year; }
+
+    public void setYear(int year){ this.year = year; }
+
+    public int getPhoneNumber(){ return phoneNumber; }
+
+    public void setPhoneNumber(int phoneNumber){ this.phoneNumber = phoneNumber; }
+
+    public String getGender(){ return gender; }
+
+    public void setGender(String gender){ this.gender = gender; }
+
+    public String getCountry(){ return country; }
+
+    public void setCountry(String country){ this.country = country; }
+
+    public String getHomeAddress(){ return homeAddress; }
+
+    public void setHomeAddress(String homeAddress){ this.homeAddress = homeAddress; }
+
+    public int getPostalCode(){ return postalCode; }
+
+    public void setPostalCode(int postalCode){ this.postalCode = postalCode; }
 
     public List<Role> getRoles() {
         return roles;

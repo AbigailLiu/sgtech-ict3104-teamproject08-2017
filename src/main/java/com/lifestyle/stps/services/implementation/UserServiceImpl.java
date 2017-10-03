@@ -62,4 +62,34 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    @Override
+    public User createUser(User user){
+        user.setEnabled(false);
+        if(user.getPassword() != null){
+            user.setEncryptedPassword(encryptionService.encryptString(user.getPassword()));
+        }
+        return userRepository.save(user);
+    }
+
+    @Override
+    public List<?> listAllNonAdmins() {
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add); //fun with Java 8
+        for(User user:users){
+            if(user.getRoles().contains("ADMIN")){
+                users.remove(user);
+            }
+        }
+        return users;
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(Integer id){
+        userRepository.delete(id);
+    }
+
+    
+
 }
