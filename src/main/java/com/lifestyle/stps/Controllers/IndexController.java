@@ -1,9 +1,9 @@
 package com.lifestyle.stps.Controllers;
 
 import com.lifestyle.stps.entities.Product;
+import com.lifestyle.stps.entities.TrainingType;
 import com.lifestyle.stps.services.ProductService;
-import com.lifestyle.stps.entities.User;
-import com.lifestyle.stps.services.UserService;
+import com.lifestyle.stps.services.TrainingTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class IndexController {
 
     private ProductService productService;
-    private UserService userService;
+
+    //Training Type
+    private TrainingTypeService TTypeService;
 
     @Autowired
     public void setProductService(ProductService productService){
@@ -26,16 +28,20 @@ public class IndexController {
     }
 
     @Autowired
-    public void setUserService(UserService userService){
-        this.userService = userService;
+    public void setTrainingTypeService(TrainingTypeService trainingTypeService){
+        this.TTypeService = trainingTypeService;
     }
 
 
     @RequestMapping("/")
-    String index(){ return "index"; }
+    String index(){
+        return "index";
+    }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(){ return "login"; }
+    public String login(){
+        return "login";
+    }
 
     @RequestMapping("product/new")
     public String newProduct(Model model){
@@ -77,29 +83,34 @@ public class IndexController {
         return "redirect:/products";
     }
 
-    @RequestMapping("user/new")
-    public String newUser(Model model){
-        model.addAttribute("user", new User());
-        return "usercreateform";
+    //For Listing all Training Type
+    @RequestMapping(value = "/trainingTypes", method = RequestMethod.GET)
+    public String listTT(Model model){
+        model.addAttribute("trainType", TTypeService.listAllTType());
+        return "trainingTypeShow";
     }
 
-    @RequestMapping(value = "user", method = RequestMethod.POST)
-    public String saveUser(User user){
-        userService.createUser(user);
-        return "redirect:/user/" + user.getId();
+    //For Add Training Type
+    @RequestMapping("trainingType/new")
+    public String newTrainingType(Model model){
+        model.addAttribute("trainType", new TrainingType());
+        return "addTrainingType";
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public String listUsers(Model model){
-        model.addAttribute("users", userService.listAllNonAdmins());
-        return "userform";
+    @RequestMapping(value = "trainType", method = RequestMethod.POST)
+    public String addTrainingType(TrainingType trainingType){
+
+        TTypeService.saveTrainingType(trainingType);
+
+        return "redirect:/trainType/" + trainingType.getId();
     }
-    /*
-    @RequestMapping("user/delete/{id}")
-    public String edit(@PathVariable Integer id, Model model){
-        userService.deleteUser(id);
-        return "redirect:/userform";
-    }*/
+
+    @RequestMapping("trainType/{id}")
+    public String showTrainingType(@PathVariable Integer id, Model model){
+        model.addAttribute("trainType", TTypeService.getTrainingTypeID(id));
+        return "trainingTypeShow";
+    }
+
 
 
 }
