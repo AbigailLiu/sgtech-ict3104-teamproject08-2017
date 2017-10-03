@@ -2,8 +2,10 @@ package com.lifestyle.stps.Controllers;
 
 import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.entities.TrainingType;
+import com.lifestyle.stps.entities.User;
 import com.lifestyle.stps.services.ProductService;
 import com.lifestyle.stps.services.TrainingTypeService;
+import com.lifestyle.stps.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class IndexController {
 
     private ProductService productService;
+    private UserService userService;
 
     //Training Type
     private TrainingTypeService TTypeService;
@@ -25,6 +28,11 @@ public class IndexController {
     @Autowired
     public void setProductService(ProductService productService){
         this.productService = productService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
     }
 
     @Autowired
@@ -111,6 +119,26 @@ public class IndexController {
         return "trainingTypeShow";
     }
 
+
+
+
+    @RequestMapping("user/new")
+    public String newUser(Model model){
+        model.addAttribute("user", new User());
+        return "usercreateform";
+    }
+
+    @RequestMapping(value = "user", method = RequestMethod.POST)
+    public String saveUser(User user){
+        userService.createUser(user);
+        return "redirect:/user/" + user.getId();
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public String listUsers(Model model){
+        model.addAttribute("users", userService.listAllNonAdmins());
+        return "userform";
+    }
 
 
 }
