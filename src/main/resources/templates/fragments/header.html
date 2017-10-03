@@ -18,6 +18,7 @@
                         <li><a href="#" th:href="@{/login}">Sign In</a></li>
                         <li><a href="#" th:href="@{/user/new}">Create User</a></li>
                         <li><a href="#" th:href="@{/users}" sec:authorize="hasAuthority('ADMIN')">View Users</a></li>
+                        <li><a href="#" th:href="@{/user/view/calendar}">View Calendar</a></li>
                     </ul>
                 </div>
             </div>

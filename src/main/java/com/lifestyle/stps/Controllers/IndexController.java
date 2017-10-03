@@ -140,5 +140,11 @@ public class IndexController {
         return "userform";
     }
 
+    @RequestMapping(value = "/user/view/calendar", method = RequestMethod.GET)
+    public String viewCalendar(){
+        return "viewCalendar";
+    }
+
+
 
 }
