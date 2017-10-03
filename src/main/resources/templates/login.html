@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login Form</title>
+    <title>LifeStyle Sport Training Providing System</title>
     <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
 </head>
 <body>
 <div class="container">
     <!--/*/ <th:block th:include="fragments/header :: header"></th:block> /*/-->
-    <div th:if="${param.error}">
-        <label style="color:red">Invalid username and password.</label>
-    </div>
-    <div th:if="${param.logout}">
-        <label>
-            You have been logged out.
-        </label>
-    </div>
+
 
     <form th:action="@{/login}" method="post">
 
