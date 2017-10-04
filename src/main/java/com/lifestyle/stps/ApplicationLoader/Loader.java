@@ -60,8 +60,10 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         loadRoles();
         assignUsersToUserRole();
         assignUsersToAdminRole();
-        //loadTrainingType();
+        assignUsersToTrainerRole();
+        loadTrainingType();
     }
+
 
     private void loadProducts() {
         Product shirt = new Product();
@@ -135,6 +137,22 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
             }
         });
     }
+    private void assignUsersToTrainerRole() {
+        List<Role> roles = (List<Role>) roleService.listAll();
+        List<User> users = (List<User>) userService.listAll();
+
+        roles.forEach(role -> {
+            if (role.getRole().equalsIgnoreCase("TRAINER")) {
+                users.forEach(user -> {
+
+                    if (user.getUsername().equals("trainer1")) {
+                        user.addRole(role);
+                        userService.saveOrUpdate(user);
+                    }
+                });
+            }
+        });
+    }
     private void assignUsersToAdminRole() {
         List<Role> roles = (List<Role>) roleService.listAll();
         List<User> users = (List<User>) userService.listAll();
@@ -154,7 +172,10 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     //Locad Training Type
     private void loadTrainingType() {
         TrainingType tt1 = new TrainingType();
-        tt1.setType("Testing 1");
+        tt1.setType("Yoga");
+        tt1.setId(1);
+        tt1.setName("H20");
+        tt1.setDetails("Mon night @ 2pm ");
         trainingTypeRepo.save(tt1);
         log.info("Saved Training Type - id: " + tt1.getId());
     }

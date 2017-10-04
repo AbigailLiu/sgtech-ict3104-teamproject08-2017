@@ -41,25 +41,26 @@ public class IndexController {
     public void setTrainingTypeService(TrainingTypeService trainingTypeService){
         this.TTypeService = trainingTypeService;
     }
-
-    @Autowired
-    private JavaMailSender mailSender;
-    public void sendSimpleMail(String inputEmail) throws Exception {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("ict3104scrum@gmail.com");
-        message.setTo(inputEmail);
-        message.setSubject(" CONGRATULATIONS ");
-        message.setText(" you are registered! ");
-        mailSender.send(message);
-    }
+//JAVA EMAIL
+//    @Autowired
+//    private JavaMailSender mailSender;
+//    public void sendSimpleMail(String inputEmail) throws Exception {
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom("ict3104scrum@gmail.com");
+//        message.setTo(inputEmail);
+//        message.setSubject(" CONGRATULATIONS ");
+//        message.setText(" you are registered! ");
+//        mailSender.send(message);
+//    }
     @RequestMapping("/")
     String index(){
-        try {
-            sendSimpleMail("micgohsl94@gmail.com");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "userregisteredemail";
+//        try {
+//            sendSimpleMail("micgohsl94@gmail.com");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return "userregisteredemail";
+            return "index";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
