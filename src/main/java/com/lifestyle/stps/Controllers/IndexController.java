@@ -7,6 +7,8 @@ import com.lifestyle.stps.services.ProductService;
 import com.lifestyle.stps.services.TrainingTypeService;
 import com.lifestyle.stps.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,10 +42,24 @@ public class IndexController {
         this.TTypeService = trainingTypeService;
     }
 
-
+    @Autowired
+    private JavaMailSender mailSender;
+    public void sendSimpleMail(String inputEmail) throws Exception {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("ict3104scrum@gmail.com");
+        message.setTo(inputEmail);
+        message.setSubject(" CONGRATULATIONS ");
+        message.setText(" you are registered! ");
+        mailSender.send(message);
+    }
     @RequestMapping("/")
     String index(){
-        return "index";
+        try {
+            sendSimpleMail("micgohsl94@gmail.com");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "userregisteredemail";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
