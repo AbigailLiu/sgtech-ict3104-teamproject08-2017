@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * Created by User 1 on 20/9/2017.
@@ -26,59 +27,61 @@ public class IndexController {
     private TrainingTypeService TTypeService;
 
     @Autowired
-    public void setProductService(ProductService productService){
+    public void setProductService(ProductService productService) {
         this.productService = productService;
     }
 
     @Autowired
-    public void setUserService(UserService userService){
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
     @Autowired
-    public void setTrainingTypeService(TrainingTypeService trainingTypeService){
+    public void setTrainingTypeService(TrainingTypeService trainingTypeService) {
         this.TTypeService = trainingTypeService;
     }
 
 
     @RequestMapping("/")
-    String index(){
+    String index() {
         return "index";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(){
+    @RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.GET})
+    public String login(Model model) {
+        User user = new User();
+        user.setAccountStatus("PENDING");
+        model.addAttribute("user", user);
         return "login";
     }
 
     @RequestMapping("product/new")
-    public String newProduct(Model model){
+    public String newProduct(Model model) {
         model.addAttribute("product", new Product());
         return "productform";
     }
 
     @RequestMapping("product/{id}")
-    public String showProduct(@PathVariable Integer id, Model model){
+    public String showProduct(@PathVariable Integer id, Model model) {
         model.addAttribute("product", productService.getProductById(id));
         return "productshow";
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public String list(Model model){
+    public String list(Model model) {
         model.addAttribute("products", productService.listAllProducts());
         return "products";
     }
 
 
-
     @RequestMapping("product/edit/{id}")
-    public String edit(@PathVariable Integer id, Model model){
+    public String edit(@PathVariable Integer id, Model model) {
         model.addAttribute("product", productService.getProductById(id));
         return "productform";
     }
 
     @RequestMapping(value = "product", method = RequestMethod.POST)
-    public String saveProduct(Product product){
+    public String saveProduct(Product product) {
 
         productService.saveProduct(product);
 
@@ -86,27 +89,27 @@ public class IndexController {
     }
 
     @RequestMapping("product/delete/{id}")
-    public String delete(@PathVariable Integer id){
+    public String delete(@PathVariable Integer id) {
         productService.deleteProduct(id);
         return "redirect:/products";
     }
 
     //For Listing all Training Type
     @RequestMapping(value = "/trainingTypes", method = RequestMethod.GET)
-    public String listTT(Model model){
+    public String listTT(Model model) {
         model.addAttribute("trainType", TTypeService.listAllTType());
         return "trainingTypeShow";
     }
 
     //For Add Training Type
     @RequestMapping("trainingType/new")
-    public String newTrainingType(Model model){
+    public String newTrainingType(Model model) {
         model.addAttribute("trainType", new TrainingType());
         return "addTrainingType";
     }
 
     @RequestMapping(value = "trainType", method = RequestMethod.POST)
-    public String addTrainingType(TrainingType trainingType){
+    public String addTrainingType(TrainingType trainingType) {
 
         TTypeService.saveTrainingType(trainingType);
 
@@ -114,31 +117,48 @@ public class IndexController {
     }
 
     @RequestMapping("trainType/{id}")
-    public String showTrainingType(@PathVariable Integer id, Model model){
+    public String showTrainingType(@PathVariable Integer id, Model model) {
         model.addAttribute("trainType", TTypeService.getTrainingTypeID(id));
         return "trainingTypeShow";
     }
 
-
-
-
     @RequestMapping("user/new")
-    public String newUser(Model model){
+    public String newUser(Model model) {
         model.addAttribute("user", new User());
         return "usercreateform";
     }
 
     @RequestMapping(value = "user", method = RequestMethod.POST)
-    public String saveUser(User user){
+    public String saveUser(User user) {
         userService.createUser(user);
         return "redirect:/user/" + user.getId();
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public String listUsers(Model model){
+    public String listUsers(Model model) {
         model.addAttribute("users", userService.listAllNonAdmins());
         return "userform";
     }
 
 
+    @RequestMapping(value = "/newRegister", method = RequestMethod.POST)
+    public String createNewRegister(User user, final RedirectAttributes redirectAttributes) {
+        User checkUsernameAvailability = userService.findByUsername(user.getUsername());
+        User checkEmailAvailability = userService.findByEmail(user.getEmail());
+        if (checkUsernameAvailability == null && checkEmailAvailability == null) {
+            userService.saveOrUpdate(user);
+        } else {
+            if (checkUsernameAvailability != null) {
+                redirectAttributes.addFlashAttribute("msg", "Registration unsuccessful. Username is in used.");
+                return "redirect:/login";
+            } else {
+                if (checkUsernameAvailability != null) {
+                    redirectAttributes.addFlashAttribute("msg", "Registration unsuccessful. Username is in used.");
+                    return "redirect:/login";
+                }
+            }
+        }
+        return "redirect:/products";
+
+    }
 }

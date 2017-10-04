@@ -30,6 +30,8 @@ public class User extends AbstractDomainClass {
     private String homeAddress;
     private int postalCode;
 
+    private String accountStatus;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable
     // ~ defaults to @JoinTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "user_id"),
@@ -142,5 +144,13 @@ public class User extends AbstractDomainClass {
 
     public void setFailedLoginAttempts(Integer failedLoginAttempts) {
         this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public String getAccountStatus(){
+        return this.accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus){
+        this.accountStatus = accountStatus;
     }
 }

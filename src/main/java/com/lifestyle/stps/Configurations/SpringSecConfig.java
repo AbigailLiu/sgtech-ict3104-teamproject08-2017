@@ -19,47 +19,65 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  */
 @Configuration
 public class SpringSecConfig extends WebSecurityConfigurerAdapter {
-    private AuthenticationProvider authenticationProvider;
+//    private AuthenticationProvider authenticationProvider;
+//
+//    @Autowired
+//    @Qualifier("daoAuthenticationProvider")
+//    public void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
+//        this.authenticationProvider = authenticationProvider;
+//    }
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder(StrongPasswordEncryptor passwordEncryptor){
+//        PasswordEncoder passwordEncoder = new PasswordEncoder();
+//        passwordEncoder.setPasswordEncryptor(passwordEncryptor);
+//        return passwordEncoder;
+//    }
+//
+//    @Bean
+//    public DaoAuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder,
+//                                                               UserDetailsService userDetailsService){
+//
+//        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+//        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+//        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+//        return daoAuthenticationProvider;
+//    }
+//
+//    @Autowired
+//    public void configureAuthManager(AuthenticationManagerBuilder authenticationManagerBuilder){
+//        authenticationManagerBuilder.authenticationProvider(authenticationProvider);
+//    }
+//    @Override
+//    protected void configure(HttpSecurity httpSecurity) throws Exception {
+//        httpSecurity
+//                .authorizeRequests().antMatchers("/","/products","/product/show/*","/console/*","/h2-console/**").permitAll()
+//                .regexMatchers("/jersey/rest/.*").permitAll()
+//                .anyRequest().authenticated()
+//                .and()
+//                .formLogin().loginPage("/login").permitAll()
+//                .and()
+//                .logout().permitAll();
+//
+//        httpSecurity.csrf().disable();
+//        httpSecurity.headers().frameOptions().disable();
+//    }
 
-    @Autowired
-    @Qualifier("daoAuthenticationProvider")
-    public void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(StrongPasswordEncryptor passwordEncryptor){
-        PasswordEncoder passwordEncoder = new PasswordEncoder();
-        passwordEncoder.setPasswordEncryptor(passwordEncryptor);
-        return passwordEncoder;
-    }
-
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(PasswordEncoder passwordEncoder,
-                                                               UserDetailsService userDetailsService){
-
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        return daoAuthenticationProvider;
-    }
-
-    @Autowired
-    public void configureAuthManager(AuthenticationManagerBuilder authenticationManagerBuilder){
-        authenticationManagerBuilder.authenticationProvider(authenticationProvider);
-    }
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .authorizeRequests().antMatchers("/","/products","/product/show/*","/console/*","/h2-console/**").permitAll()
+        httpSecurity.authorizeRequests()
+                .regexMatchers("/jersey/rest/.*").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login").permitAll()
-                .and()
-                .logout().permitAll();
+                .httpBasic();
 
         httpSecurity.csrf().disable();
         httpSecurity.headers().frameOptions().disable();
+    }
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication().withUser("admin").password("pass").roles("ADMIN");
     }
 
 
