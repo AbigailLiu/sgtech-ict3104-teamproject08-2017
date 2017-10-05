@@ -32,11 +32,15 @@
         <table class="table table-striped">
             <tr>
                 <th>Id</th>
+                <th>Trainer name</th>
                 <th>Training type</th>
+                <th>Training details</th>
             </tr>
             <tr th:each="TT : ${trainType}">
                 <td th:text="${TT.id}"><a href="/TT/${TT.id}">Id</a></td>
+                <td th:text="${TT.name}">Trainer Name </td>
                 <td th:text="${TT.type}">Training Type</td>
+                <td th:text="${TT.details}">Details </td>
             </tr>
         </table>
     </div>
@@ -44,7 +48,7 @@
 
     <form class="form-horizontal" th:action="@{/trainingType/new}" method="post">
         <div class="row" style="margin: 0px;">
-            <button type="submit" class="btn btn-default">New Training Type</button>
+            <button sec:authorize="hasAuthority('TRAINER')" type="submit" class="btn btn-default">New Training Type</button>
         </div>
     </form>
 

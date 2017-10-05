@@ -10,8 +10,9 @@ public class TrainingType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
     private String type;
+    private String details;
+    private String name;
 
     public String getType() {
         return type;
@@ -28,4 +29,12 @@ public class TrainingType {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public void setDetails(String details) {this.details = details;}
+
+    public String getDetails() {return details;}
+
+    public void setName(String name) {this.name=name;}
+
+    public String getName(){return name;}
 }

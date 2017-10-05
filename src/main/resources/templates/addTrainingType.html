@@ -21,13 +21,25 @@
         <form class="form-horizontal" th:object="${trainTypeForm}" th:action="@{/trainTypeSubmit}" method="post">
             <input type="hidden" th:field="*{id}"/>
             <div class="form-group">
+                <label class="col-sm-2 control-label">Trainer Name:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{name}" th:required="required"/>
+                </div>
                 <label class="col-sm-2 control-label">Training Type:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" th:field="*{type}" th:required="required"/>
+                    <select class="form-control" th:field="*{type}" th:required="required">
+                        <option value="yoga">yoga</option>
+                        <option value="kickboxing">kickboxing</option>
+                        <option value="Weights">Weights</option>
+                    </select>
                 </div>
-            </div>
+                <label class="col-sm-2 control-label">Training Details:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{details}" th:required="required"/>
+                </div>
             <div class="row" style="margin: 0px;">
                 <button type="submit" class="btn btn-default">Submit</button>
+            </div>
             </div>
         </form>
     </div>
