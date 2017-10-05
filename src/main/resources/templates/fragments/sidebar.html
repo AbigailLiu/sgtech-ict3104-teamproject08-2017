@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <link href="../../static/css/sidebarCSS.css" th:href="@{/css/sidebarCSS.css}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="../../static/js/sidebarJS.js" th:src="@{js/sidebarJS.js}"></script>
+</head>
+<body>
+<div th:fragment="sidebar">
+    <div class="col-sm-2" id="sidenav-left">
+        <ul class="nav nav-stacked affix col-sm-2" style="height: 100%; margin-left: -20px;
+        background-color: rgba(239,239,239,0.39); border-right: 1px #e5e5e5 solid;">
+
+            <li class="navbar-header">
+                <img class="center-block" src="../../static/images/firefish-logo.png" height="55px" th:src="@{~/images/firefish-logo.png}"/>
+            </li>
+            <li style="border-bottom: 1px #e5e5e5 solid;"><a href="/admindashboard" style="color: #777;">Dashboard
+                <span style="font-size: 20px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-dashboard"></span>
+            </a></li>
+            <li style="border-bottom: 1px #e5e5e5 solid;"><a href="/adminaccountmanagement" style="color: #777;">Account Management
+                <span style="font-size: 20px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-eye-open"></span>
+            </a></li>
+            <li style="border-bottom: 1px #e5e5e5 solid;"><a href="/admintrainingmanagement" style="color: #777;">Training Management
+                <span style="font-size: 20px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-warning-sign"></span>
+            </a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

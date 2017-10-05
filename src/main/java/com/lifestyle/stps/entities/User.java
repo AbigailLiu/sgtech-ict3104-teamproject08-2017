@@ -29,6 +29,7 @@ public class User extends AbstractDomainClass {
     private String country;
     private String homeAddress;
     private int postalCode;
+    private String trole;
 
     private String accountStatus;
 
@@ -152,5 +153,13 @@ public class User extends AbstractDomainClass {
 
     public void setAccountStatus(String accountStatus){
         this.accountStatus = accountStatus;
+    }
+
+    public String getTrole(){
+        return trole;
+    }
+
+    public void setTrole(String trole){
+        this.trole = trole;
     }
 }

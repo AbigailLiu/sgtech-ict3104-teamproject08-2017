@@ -1,11 +1,10 @@
 package com.lifestyle.stps.Controllers;
 
-import com.lifestyle.stps.entities.Product;
-import com.lifestyle.stps.entities.TrainingType;
-import com.lifestyle.stps.entities.User;
-import com.lifestyle.stps.services.ProductService;
-import com.lifestyle.stps.services.TrainingTypeService;
-import com.lifestyle.stps.services.UserService;
+import com.lifestyle.stps.Repositories.NotificationRepository;
+import com.lifestyle.stps.entities.*;
+import com.lifestyle.stps.services.*;
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.jws.WebParam;
+import java.util.List;
 
 /**
  * Created by User 1 on 20/9/2017.
@@ -22,6 +24,12 @@ public class IndexController {
 
     private ProductService productService;
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     //Training Type
     private TrainingTypeService TTypeService;
@@ -140,25 +148,75 @@ public class IndexController {
         return "userform";
     }
 
+    @RequestMapping(value = "/admindashboard", method = RequestMethod.GET)
+    String listNotifications(Model model) {
+        List<Notification> notifications = (List<Notification>) notificationService.listAllNotifications();
+        model.addAttribute("notifications", notifications);
+        return "admindashboard";
+    }
+
+
 
     @RequestMapping(value = "/newRegister", method = RequestMethod.POST)
-    public String createNewRegister(User user, final RedirectAttributes redirectAttributes) {
-        User checkUsernameAvailability = userService.findByUsername(user.getUsername());
-        User checkEmailAvailability = userService.findByEmail(user.getEmail());
-        if (checkUsernameAvailability == null && checkEmailAvailability == null) {
-            userService.saveOrUpdate(user);
-        } else {
-            if (checkUsernameAvailability != null) {
-                redirectAttributes.addFlashAttribute("msg", "Registration unsuccessful. Username is in used.");
-                return "redirect:/login";
-            } else {
-                if (checkUsernameAvailability != null) {
-                    redirectAttributes.addFlashAttribute("msg", "Registration unsuccessful. Username is in used.");
-                    return "redirect:/login";
-                }
-            }
-        }
-        return "redirect:/products";
+    public String createNewRegister(User user) {
+        String srole = user.getTrole();
+        Role role = roleService.findByRole(srole.toUpperCase());
+        user.addRole(role);
+        userService.saveOrUpdate(user);
+        Notification notification = new Notification();
+        notification.setDescription("Awaiting Account Approval: " + user.getUsername());
+        notification.setNotificationType("Account Request");
+        notification.setRefId(user.getId());
+        notificationService.saveNotification(notification);
+        return "redirect:/admindashboard";
+    }
 
+    @RequestMapping(value = "/adminaccountmanagement", method = RequestMethod.GET)
+    public String listUser(Model model){
+        List<User> users = (List<User>) userService.listAll();
+        model.addAttribute("users",users);
+        return "adminaccountmanagement";
+    }
+
+    @RequestMapping("accountApproval/{id}")
+    public String showNotification(@PathVariable Integer id, Model model) {
+        Notification notification = notificationService.getNotificationById(id);
+        Integer tid = notification.getRefId();
+        if (notification.getNotificationType().equals("Account Request")){
+            model.addAttribute("user", userService.getById(tid));
+        }else{
+            //reserved for training
+        }
+        return "accountApproval";
+    }
+
+    @RequestMapping(value = "account/approve/{id}")
+    public String updateApprove(@PathVariable("id") Integer id){
+        User user = userService.getById(id);
+        user.setAccountStatus("APPROVED");
+        userService.saveOrUpdate(user);
+        Notification notification = notificationService.getNotificationByRefId(user.getId());
+        Integer nid = notification.getId();
+        notificationService.deleteNotification(nid);
+        return "redirect:/admindashboard";
+    }
+
+    @RequestMapping(value = "account/disapprove/{id}")
+    public String updateDisapprove(@PathVariable("id") Integer id){
+        User user = userService.getById(id);
+        user.setAccountStatus("DISAPPROVED");
+        userService.saveOrUpdate(user);
+        Notification notification = notificationService.getNotificationByRefId(user.getId());
+        Integer nid = notification.getId();
+        notificationService.deleteNotification(nid);
+        return "redirect:/admindashboard";
+    }
+
+    @RequestMapping(value = "adminaccountmanagement/delete/{id}")
+    public String deleteAccount(@PathVariable("id") Integer id){
+        User user = userService.getById(id);
+        user.setEnabled(Boolean.FALSE);
+        userService.saveOrUpdate(user);
+        return "redirect:/adminaccountmanagement";
     }
 }

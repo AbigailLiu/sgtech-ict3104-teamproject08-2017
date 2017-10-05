@@ -56,8 +56,8 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         loadProducts();
-        loadUsers();
         loadRoles();
+        loadUsers();
         assignUsersToUserRole();
         assignUsersToAdminRole();
         //loadTrainingType();
@@ -87,23 +87,28 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         User user1 = new User();
         user1.setUsername("user");
         user1.setPassword("user");
+        user1.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user1);
 
         User user2 = new User();
         user2.setUsername("admin");
         user2.setPassword("admin");
+        user2.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user2);
 
         User user3 = new User();
         user3.setUsername("trainer1");
         user3.setPassword("trainer1");
+        user3.setAccountStatus("APPROVED");
+        Role role = roleService.findByRole("TRAINER");
+        user3.addRole(role);
         userService.saveOrUpdate(user3);
 
     }
 
     private void loadRoles() {
         Role role = new Role();
-        role.setRole("USER");
+        role.setRole("TRAINEE");
         roleService.saveOrUpdate(role);
         log.info("Saved role" + role.getRole());
         Role adminRole = new Role();

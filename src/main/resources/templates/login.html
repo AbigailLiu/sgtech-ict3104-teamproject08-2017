@@ -15,8 +15,10 @@
 
                 var response = xhttp.responseText;
                 if (response == "fail"){
-                    var element = document.getElementsByClassName("noti");
-                    element.setAttribute("hidden", true);
+                    document.getElementById("divformcheck").style.display = "block";
+                    document.getElementById("formcheck").innerText = "Username already in used.";
+                }else{
+                    document.getElementById("divformcheck").style.display="none";
                 }
             }
         }
@@ -51,13 +53,13 @@
                                     <label for="checkbox1">Remember Me</label>
                                 </div>
                                 <div class="col-xs-6 pull-right">
-                                    <input type="submit" name="login-submit" tabindex="4" class="btn btn-default btn-block" value="Log In"/>
+                                    <input type="submit" name="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In"/>
                                 </div>
                             </form>
                             <form id="register-form" th:object="${user}" th:action="@{/newRegister}" method="post" role="form" style="display: none;">
                                 <div>
-                                    <div class="noti alert-danger" role="alert">
-                                        <strong>Dummy.</strong>
+                                    <div id="divformcheck" class="alert alert-danger" role="alert" style="display: none;">
+                                        <p id="formcheck">Hello</p>
                                     </div>
                                 </div>
                                 <h2>REGISTER</h2>
@@ -66,9 +68,9 @@
                                 <input type="hidden" th:field="*{accountStatus}"/>
                                 <div class="form-group">
                                     <p>I want to register as a...
-                                        <select style="padding-left: 5px;" tabindex="1" name="roles">
-                                            <option value="Trainer">Trainer</option>
-                                            <option value="Trainee">Trainee</option>
+                                        <select style="padding-left: 5px;" tabindex="1" name="roles" th:field="*{trole}">
+                                            <option th:value="Trainer">Trainer</option>
+                                            <option th:value="Trainee">Trainee</option>
                                         </select>
                                     </p>
                                 </div>
