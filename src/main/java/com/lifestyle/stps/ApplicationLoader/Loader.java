@@ -3,6 +3,7 @@ package com.lifestyle.stps.ApplicationLoader;
 
 import com.lifestyle.stps.Repositories.ProductRepository;
 import com.lifestyle.stps.Repositories.TrainingTypeRepository;
+import com.lifestyle.stps.Repositories.UserRepository;
 import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.entities.Role;
 import com.lifestyle.stps.entities.TrainingType;
@@ -87,20 +88,38 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
 
     private void loadUsers() {
         User user1 = new User();
+        user1.setid(1);
         user1.setUsername("user");
         user1.setPassword("user");
         userService.saveOrUpdate(user1);
 
         User user2 = new User();
+        user2.setid(2);
         user2.setUsername("admin");
         user2.setPassword("admin");
         userService.saveOrUpdate(user2);
 
         User user3 = new User();
+        user3.setid(3);
         user3.setUsername("trainer1");
         user3.setPassword("trainer1");
         userService.saveOrUpdate(user3);
 
+        User user4= new User();
+        user4.setid(4);
+        user4.setUsername("mich");
+        user4.setPassword("mich");
+        user4.setEmail("mich@gmail.com");
+        user4.setFirstName("mich");
+        user4.setLastName("g");
+        user4.setDay(1);
+        user4.setMonth(12);
+        user4.setPhoneNumber(123456);
+        user4.setGender("Others");
+        user4.setCountry("Tiongland");
+        user4.setHomeAddress("Changchun");
+        user4.setPostalCode(123456);
+        userService.saveOrUpdate(user4);
     }
 
     private void loadRoles() {
@@ -129,7 +148,7 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
                         user.addRole(role);
                         userService.saveOrUpdate(user);
                     }
-                    if (user.getUsername().equals("trainer")) {
+                    if (user.getUsername().equals("mich")) {
                         user.addRole(role);
                         userService.saveOrUpdate(user);
                     }
@@ -169,7 +188,7 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         });
     }
 
-    //Locad Training Type
+    //Load Training Type
     private void loadTrainingType() {
         TrainingType tt1 = new TrainingType();
         tt1.setType("Yoga");
@@ -179,4 +198,7 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         trainingTypeRepo.save(tt1);
         log.info("Saved Training Type - id: " + tt1.getId());
     }
+
+
+
 }

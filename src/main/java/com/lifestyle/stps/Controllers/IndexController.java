@@ -41,7 +41,7 @@ public class IndexController {
     public void setTrainingTypeService(TrainingTypeService trainingTypeService){
         this.TTypeService = trainingTypeService;
     }
-//JAVA EMAIL
+
 //    @Autowired
 //    private JavaMailSender mailSender;
 //    public void sendSimpleMail(String inputEmail) throws Exception {

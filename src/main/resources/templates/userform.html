@@ -28,6 +28,7 @@
                 <th>Id</th>
                 <th>User Name</th>
                 <th>Email</th>
+                <th>Role</th>
                 <th>Name</th>
                 <th>Birthday</th>
                 <th>Mobile Number</th>
@@ -39,12 +40,13 @@
                 <th sec:authorize="hasAuthority('ADMIN')">Edit</th>
                 <th sec:authorize="hasAuthority('ADMIN')">Delete</th>
             </tr>
-            <tr th:each="product : ${users}">
-                <td th:text="${user.ID}"><a href="/user/${user.ID}"></a></td>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"><a href="/user/${user.id}"></a></td>
                 <td th:text="${user.username}"></td>
                 <td th:text="${user.email}"></td>
-                <td th:text="${user.firstName + user.lastName}"></td>
-                <td th:text="${user.day + '/' user.month + '/' + user.year}"></td>
+                <td th:text="${user.getRoles()}"></td>
+                <td th:text="${user.firstName+' '+user.lastName}"></td>
+                <td th:text="${user.day+'/'+user.month+'/'+user.year}"></td>
                 <td th:text="${user.phoneNumber}"></td>
                 <td th:text="${user.gender}"></td>
                 <td th:text="${user.country}"></td>
