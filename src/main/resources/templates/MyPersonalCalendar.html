@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head lang="en">
+    <meta charset='utf-8' />
+
+    <title>My Personal Calendar</title>
+    <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+
+    <!-- Calendar Script -->
+    <link href="../static/css/fullcalendar.min.css" th:href="@{/css/fullcalendar.min.css}" rel="stylesheet"/>
+    <link href="../static/css/fullcalendar.print.min.css" th:href="@{/css/fullcalendar.print.min.css}" rel="stylesheet" media="print"/>
+
+    <script src="//code.jquery.com/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.js"></script>
+    <script src="/shared/js/bootstrapmodal.min.js"></script>
+
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var myEvents = [];
+
+        var theList = [[${myCal}]]
+        for (i = 0; i < theList.length; i++) {
+            scheudule(String(Object.values(theList[i])[6]), String(Object.values(theList[i])[7]), String(Object.values(theList[i])[2]), String(Object.values(theList[i])[1]),
+                String(Object.values(theList[i])[5]), String(Object.values(theList[i])[4]));
+        }
+
+        function scheudule(titles, venue, startDate, endDate, startTime, EndTime)
+        {
+            eventTitle = titles + " At " + venue;
+            eventStart = startDate + "T" + startTime;
+            eventEnd = endDate + "T" + EndTime;
+
+            myEvents.push({
+                title: eventTitle,
+                start: eventStart,
+                end: eventEnd
+            });
+        }
+
+        pushevent();
+
+        function pushevent()
+        {
+            $(document).ready(function() {
+                $('#calendar').fullCalendar({
+                    defaultDate: '2017-09-12',
+                    editable: false,
+                    eventLimit: true, // allow "more" link when too many events
+                    events: myEvents
+                });
+
+            });
+        }
+
+        /*]]>*/
+    </script>
+
+
+
+    <style>
+        #calendar {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/header :: header"></th:block> /*/-->
+
+    <h2>My Personal Calendar</h2>
+
+    <form class="form-horizontal" th:action="@{/schedule/new}" method="post">
+        <div class="row" style="margin: 0px;">
+            <button type="submit" class="btn btn-default">New Schedule</button>
+        </div>
+    </form>
+
+    <br/>
+
+    <!-- If empty -->
+    <div th:if="${#lists.isEmpty(myCal)}">
+        <h1>Sorry, There is no schedule for you at the moment</h1>
+    </div>
+    <!-- //If not empty -->
+    <div th:if="${not #lists.isEmpty(myCal)}">
+        <form th:action="@{/logout}" method="post">
+            <div id='calendar'></div>
+            <!-- <div class="col-sm-2" style="padding-top: 30px;">
+                     <span sec:authorize="isAuthenticated()">
+                    <input type="submit" value="Sign Out" />
+                               </span>
+            </div> -->
+        </form>
+
+    </div>
+
+    <br />
+
+</div>
+
+</body>
+</html>

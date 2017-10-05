@@ -1,7 +1,6 @@
 package com.lifestyle.stps.services.implementation;
 
 import com.lifestyle.stps.Repositories.TrainingTypeRepository;
-import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.entities.TrainingType;
 import com.lifestyle.stps.services.TrainingTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
