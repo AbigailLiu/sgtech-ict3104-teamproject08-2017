@@ -14,7 +14,10 @@
                     <ul class="nav navbar-nav">
                         <li><a href="#" th:href="@{/products}">Products</a></li>
                         <li><a href="#" th:href="@{/product/new}" sec:authorize="hasAuthority('ADMIN')">Create Product</a></li>
-                        <li><a href="#" th:href="@{/trainingTypes}">Training Type</a></li>
+
+                        <li><a href="#" th:href="@{/trainingTypes}" sec:authorize="hasAuthority('ADMIN')">Training Type</a></li>
+                        <li><a href="#" th:href="@{/traningCalendar}" sec:authorize="hasAuthority('USER')">My Calendar</a></li>
+
                         <li><a href="#" th:href="@{/login}">Sign In</a></li>
                         <li><a href="#" th:href="@{/user/new}">Create User</a></li>
                         <li><a href="#" th:href="@{/users}" >View Users</a></li>

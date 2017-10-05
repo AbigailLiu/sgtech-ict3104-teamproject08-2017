@@ -1,13 +1,12 @@
 package com.lifestyle.stps.ApplicationLoader;
 
 
+import com.lifestyle.stps.Repositories.PersonalCalRepository;
 import com.lifestyle.stps.Repositories.ProductRepository;
 import com.lifestyle.stps.Repositories.TrainingTypeRepository;
-import com.lifestyle.stps.Repositories.UserRepository;
-import com.lifestyle.stps.entities.Product;
-import com.lifestyle.stps.entities.Role;
-import com.lifestyle.stps.entities.TrainingType;
-import com.lifestyle.stps.entities.User;
+
+import com.lifestyle.stps.entities.*;
+
 import com.lifestyle.stps.services.RoleService;
 import com.lifestyle.stps.services.UserService;
 import org.apache.log4j.Logger;
@@ -26,6 +25,7 @@ import java.util.List;
 public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     private ProductRepository productRepository;
     private TrainingTypeRepository trainingTypeRepo;
+    private PersonalCalRepository personalCalRepo;
     private UserService userService;
     private RoleService roleService;
 
@@ -42,6 +42,11 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         this.trainingTypeRepo = trainingTypeRepo;
     }
 
+    //For Personal Calendar
+    @Autowired
+    public void setMyCalRepository(PersonalCalRepository myCalRepos) {
+        this.personalCalRepo = myCalRepos;
+    }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -57,12 +62,13 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         loadProducts();
-        loadUsers();
         loadRoles();
+        loadUsers();
         assignUsersToUserRole();
         assignUsersToAdminRole();
         assignUsersToTrainerRole();
         loadTrainingType();
+        loadSchedule();
     }
 
 
@@ -91,18 +97,23 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         user1.setid(1);
         user1.setUsername("user");
         user1.setPassword("user");
+        user1.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user1);
 
         User user2 = new User();
         user2.setid(2);
         user2.setUsername("admin");
         user2.setPassword("admin");
+        user2.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user2);
 
         User user3 = new User();
         user3.setid(3);
         user3.setUsername("trainer1");
         user3.setPassword("trainer1");
+        user3.setAccountStatus("APPROVED");
+        Role role = roleService.findByRole("TRAINER");
+        user3.addRole(role);
         userService.saveOrUpdate(user3);
 
         User user4= new User();
@@ -124,7 +135,7 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
 
     private void loadRoles() {
         Role role = new Role();
-        role.setRole("USER");
+        role.setRole("TRAINEE");
         roleService.saveOrUpdate(role);
         log.info("Saved role" + role.getRole());
         Role adminRole = new Role();
@@ -195,8 +206,45 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         tt1.setId(1);
         tt1.setName("H20");
         tt1.setDetails("Mon night @ 2pm ");
+
+        tt1.setType("Testing 1");
+
+        TrainingType tt2 = new TrainingType();
+        tt2.setType("Testing 2");
+
         trainingTypeRepo.save(tt1);
+        trainingTypeRepo.save(tt2);
         log.info("Saved Training Type - id: " + tt1.getId());
+        log.info("Saved Training Type - id: " + tt2.getId());
+    }
+
+    //Locad Training Type
+    private void loadSchedule() {
+        PersonalCalendar PC1 = new PersonalCalendar();
+        PC1.setUserName("user");
+        PC1.setTrainingDateStart("2017-10-28");
+        PC1.setTrainingTimeStart("14:00:00");
+        PC1.setTrainingDateEnd("2017-10-28");
+        PC1.setTrainingTimeEnd("17:00:00");
+        PC1.setTrainingType("Testing 1");
+        PC1.setTrainingDesc("Test");
+        PC1.setTrainingVenue("Test");
+
+
+        PersonalCalendar PC2 = new PersonalCalendar();
+        PC2.setUserName("user");
+        PC2.setTrainingDateStart("2017-10-29");
+        PC2.setTrainingTimeStart("14:00:00");
+        PC2.setTrainingDateEnd("2017-10-29");
+        PC2.setTrainingTimeEnd("15:00:00");
+        PC2.setTrainingType("Testing 1");
+        PC2.setTrainingDesc("Test");
+        PC2.setTrainingVenue("Test");
+
+        personalCalRepo.save(PC1);
+        personalCalRepo.save(PC2);
+        log.info("Saved Schedule - id: " + PC1.getId());
+        log.info("Saved Schedule - id: " + PC2.getId());
     }
 
 

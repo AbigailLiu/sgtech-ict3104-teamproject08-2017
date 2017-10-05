@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang = "en">
+
+    <title>Website Content Monitor</title>
+
+    <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+    <!--/*/ <th:block th:include="fragments/datatableinc :: datatableinc"></th:block> /*/-->
+
+    <script>
+        $(document).ready(function(){
+            $('#webData').DataTable();
+        });
+    </script>
+
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row content">
+        <!--/*/ <th:block th:include="fragments/sidebar :: sidebar"></th:block> /*/-->
+        <div class="col-sm-10">
+            <div class="topspace" th:if="${msg!=null}">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"
+                            aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <strong th:text = "${msg}">Message</strong>
+                </div>
+            </div>
+
+            <form th:action="@{/monitorWeb/new}" method="post">
+                <div class="form-group">
+                    <div class="col-sm-4 headerLeft"><h2>Monitors</h2></div>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary pull-right buttonCenter"><i class="glyphicon glyphicon-plus"></i> Create a New Monitor</button>
+                    </div>
+                </div>
+            </form>
+
+            <div th:if="${not #lists.isEmpty(users)}">
+                <table id="webData" class="table table-striped display">
+                    <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Account Role</th>
+                        <th>Last Updated</th>
+                        <th>Account Status</th>
+                        <th class="sorting-disabled"></th>
+                        <th class="sorting-disabled"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.username}">Username</td>
+                        <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.trole}">Account Role</td>
+                        <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.lastUpdated}">Last Updated</td>
+                        <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.accountStatus}">Account Status</td>
+                        <td th:if="${user.accountStatus != 'DELETED'}">
+                            <form th:action="${'/home/edit/' + user.id}">
+                                <input type="submit" class="btn btn-warning btn-block" value="Edit"/>
+                            </form>
+                        </td>
+                        <td th:if="${user.accountStatus != 'DELETED'}">
+                            <form th:action="${'/adminaccountmanagement/delete/'+ user.id}">
+                                <input type="submit" class="btn btn-danger btn-block" value="Delete"/>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${#lists.isEmpty(users)}">
+                <h3 class="centertext">No user accounts found. Create a new user account now.</h3>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

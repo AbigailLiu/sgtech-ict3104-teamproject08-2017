@@ -18,7 +18,7 @@
 
     <h2>Add Training Type</h2>
     <div>
-        <form class="form-horizontal" th:object="${trainType}" th:action="@{/trainType}" method="post">
+        <form class="form-horizontal" th:object="${trainTypeForm}" th:action="@{/trainTypeSubmit}" method="post">
             <input type="hidden" th:field="*{id}"/>
             <div class="form-group">
                 <label class="col-sm-2 control-label">Trainer Name:</label>

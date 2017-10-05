@@ -1,6 +1,5 @@
 package com.lifestyle.stps.services;
 
-import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.entities.TrainingType;
 import org.springframework.stereotype.Service;
 

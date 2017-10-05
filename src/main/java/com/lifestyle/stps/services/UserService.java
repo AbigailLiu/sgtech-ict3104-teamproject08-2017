@@ -9,6 +9,7 @@ import java.util.List;
  */
 public interface UserService extends CRUDService<User> {
     User findByUsername(String username);
+    User findByEmail(String email);
     User createUser(User user);
     List<?> listAllNonAdmins();
     void deleteUser(Integer id);

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:display="http://www.w3.org/1999/xhtml">
+<head lang = "en">
+
+    <title>Lifestyle - STPS</title>
+
+    <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row content">
+        <!--/*/ <th:block th:include="fragments/sidebar :: sidebar"></th:block> /*/-->
+        <div class="col-sm-10 main">
+            <h2>Account Request</h2>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Username:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static" th:text="${user.username}">Username</p></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Firstname:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static" th:text="${user.firstName}">firstname</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Lastname:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static" th:text="${user.lastName}">lastname</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Account Role:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static" th:text="${user.trole}">role</p>
+                    </div>
+                </div>
+            </form>
+
+            <div id="btnDiv" class="topspace">
+                <div class="col-sm-1">
+                    <form th:action="${'/account/approve/' + user.id}">
+                        <input type="submit" class="btn btn-success floatright" value="Approve"/>
+                    </form>
+                </div>
+                <div class="col-sm-1">
+                    <form th:action="${'/account/disapprove/' + user.id}">
+                        <input type="submit" class="btn btn-danger floatright" value="Disapprove"/>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

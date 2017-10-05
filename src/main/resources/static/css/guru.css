@@ -1,3 +1,7 @@
+body{
+    height:100%;
+}
+
 input[type=submit] {
     background:none!important;
     border:none;
@@ -43,4 +47,13 @@ select#usercreategender {
     border-radius: 9px 9px 9px 9px;
     box-shadow: 1px 1px 11px #330033;
     background: #FFFFFF no-repeat scroll 319px center;
+}
+
+.sorting-disabled {
+    background-image: none !important;
+}
+
+.topspace {
+    margin-top: 5%;
+    padding-top: 5%;
 }
