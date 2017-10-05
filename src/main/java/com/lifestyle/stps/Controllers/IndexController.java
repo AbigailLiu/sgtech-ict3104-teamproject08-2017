@@ -7,6 +7,11 @@ import com.lifestyle.stps.services.PersonalCalService;
 import com.lifestyle.stps.services.ProductService;
 import com.lifestyle.stps.services.TrainingTypeService;
 import com.lifestyle.stps.services.UserService;
+import com.lifestyle.stps.Repositories.NotificationRepository;
+import com.lifestyle.stps.entities.*;
+import com.lifestyle.stps.services.*;
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +20,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.jws.WebParam;
+import java.util.List;
 
 /**
  * Created by User 1 on 20/9/2017.
@@ -23,6 +32,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class IndexController {
 
     private ProductService productService;
+    private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     //Training Type
     private TrainingTypeService TTypeService;
@@ -31,12 +47,17 @@ public class IndexController {
     private PersonalCalService MyCalService;
 
     @Autowired
-    public void setProductService(ProductService productService){
+    public void setProductService(ProductService productService) {
         this.productService = productService;
     }
 
     @Autowired
-    public void setTrainingTypeService(TrainingTypeService trainingTypeService){
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setTrainingTypeService(TrainingTypeService trainingTypeService) {
         this.TTypeService = trainingTypeService;
     }
 
@@ -47,43 +68,45 @@ public class IndexController {
 
 
     @RequestMapping("/")
-    String index(){
+    String index() {
         return "index";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(){
+    @RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.GET})
+    public String login(Model model) {
+        User user = new User();
+        user.setAccountStatus("PENDING");
+        model.addAttribute("user", user);
         return "login";
     }
 
     @RequestMapping("product/new")
-    public String newProduct(Model model){
+    public String newProduct(Model model) {
         model.addAttribute("product", new Product());
         return "productform";
     }
 
     @RequestMapping("product/{id}")
-    public String showProduct(@PathVariable Integer id, Model model){
+    public String showProduct(@PathVariable Integer id, Model model) {
         model.addAttribute("product", productService.getProductById(id));
         return "productshow";
     }
 
     @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public String list(Model model){
+    public String list(Model model) {
         model.addAttribute("products", productService.listAllProducts());
         return "products";
     }
 
 
-
     @RequestMapping("product/edit/{id}")
-    public String edit(@PathVariable Integer id, Model model){
+    public String edit(@PathVariable Integer id, Model model) {
         model.addAttribute("product", productService.getProductById(id));
         return "productform";
     }
 
     @RequestMapping(value = "product", method = RequestMethod.POST)
-    public String saveProduct(Product product){
+    public String saveProduct(Product product) {
 
         productService.saveProduct(product);
 
@@ -91,7 +114,7 @@ public class IndexController {
     }
 
     @RequestMapping("product/delete/{id}")
-    public String delete(@PathVariable Integer id){
+    public String delete(@PathVariable Integer id) {
         productService.deleteProduct(id);
         return "redirect:/products";
     }
@@ -99,7 +122,7 @@ public class IndexController {
     //Add Bu Mun Han
     //For Listing all Training Type
     @RequestMapping(value = "/trainingTypes", method = RequestMethod.GET)
-    public String listTT(Model model){
+    public String listTT(Model model) {
         model.addAttribute("trainType", TTypeService.listAllTType());
         return "trainingTypeShow";
     }
@@ -115,6 +138,7 @@ public class IndexController {
     @RequestMapping(value = "trainTypeSubmit", method = RequestMethod.POST)
     public String addTrainingType(TrainingType trainingType){
 
+
         TTypeService.saveTrainingType(trainingType);
 
         return "redirect:/trainingType/" + trainingType.getId();
@@ -123,6 +147,8 @@ public class IndexController {
     //Get particular training type
     @RequestMapping("trainingType/{id}")
     public String showTrainingType(@PathVariable Integer id, Model model){
+
+
         model.addAttribute("trainType", TTypeService.getTrainingTypeID(id));
         return "trainingTypeShow";
     }
@@ -158,6 +184,93 @@ public class IndexController {
         return "MyPersonalCalendar";
     }
 
+    @RequestMapping("user/new")
+    public String newUser(Model model) {
+        model.addAttribute("user", new User());
+        return "usercreateform";
+    }
+
+    @RequestMapping(value = "user", method = RequestMethod.POST)
+    public String saveUser(User user) {
+        userService.createUser(user);
+        return "redirect:/user/" + user.getId();
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public String listUsers(Model model) {
+        model.addAttribute("users", userService.listAllNonAdmins());
+        return "userform";
+    }
+
+    @RequestMapping(value = "/admindashboard", method = RequestMethod.GET)
+    String listNotifications(Model model) {
+        List<Notification> notifications = (List<Notification>) notificationService.listAllNotifications();
+        model.addAttribute("notifications", notifications);
+        return "admindashboard";
+    }
 
 
+
+    @RequestMapping(value = "/newRegister", method = RequestMethod.POST)
+    public String createNewRegister(User user) {
+        String srole = user.getTrole();
+        Role role = roleService.findByRole(srole.toUpperCase());
+        user.addRole(role);
+        userService.saveOrUpdate(user);
+        Notification notification = new Notification();
+        notification.setDescription("Awaiting Account Approval: " + user.getUsername());
+        notification.setNotificationType("Account Request");
+        notification.setRefId(user.getId());
+        notificationService.saveNotification(notification);
+        return "redirect:/admindashboard";
+    }
+
+    @RequestMapping(value = "/adminaccountmanagement", method = RequestMethod.GET)
+    public String listUser(Model model){
+        List<User> users = (List<User>) userService.listAll();
+        model.addAttribute("users",users);
+        return "adminaccountmanagement";
+    }
+
+    @RequestMapping("accountApproval/{id}")
+    public String showNotification(@PathVariable Integer id, Model model) {
+        Notification notification = notificationService.getNotificationById(id);
+        Integer tid = notification.getRefId();
+        if (notification.getNotificationType().equals("Account Request")){
+            model.addAttribute("user", userService.getById(tid));
+        }else{
+            //reserved for training
+        }
+        return "accountApproval";
+    }
+
+    @RequestMapping(value = "account/approve/{id}")
+    public String updateApprove(@PathVariable("id") Integer id){
+        User user = userService.getById(id);
+        user.setAccountStatus("APPROVED");
+        userService.saveOrUpdate(user);
+        Notification notification = notificationService.getNotificationByRefId(user.getId());
+        Integer nid = notification.getId();
+        notificationService.deleteNotification(nid);
+        return "redirect:/admindashboard";
+    }
+
+    @RequestMapping(value = "account/disapprove/{id}")
+    public String updateDisapprove(@PathVariable("id") Integer id){
+        User user = userService.getById(id);
+        user.setAccountStatus("DISAPPROVED");
+        userService.saveOrUpdate(user);
+        Notification notification = notificationService.getNotificationByRefId(user.getId());
+        Integer nid = notification.getId();
+        notificationService.deleteNotification(nid);
+        return "redirect:/admindashboard";
+    }
+
+    @RequestMapping(value = "adminaccountmanagement/delete/{id}")
+    public String deleteAccount(@PathVariable("id") Integer id){
+        User user = userService.getById(id);
+        user.setEnabled(Boolean.FALSE);
+        userService.saveOrUpdate(user);
+        return "redirect:/adminaccountmanagement";
+    }
 }

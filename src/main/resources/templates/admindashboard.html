@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:display="http://www.w3.org/1999/xhtml">
+<head lang = "en">
+
+    <title>Lifestyle - STPS</title>
+
+    <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+    <!--/*/ <th:block th:include="fragments/datatableinc :: datatableinc"></th:block> /*/-->
+
+    <script>
+        $(document).ready(function(){
+            $('#notificationsPending').DataTable();
+        });
+    </script>
+
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row content">
+        <!--/*/ <th:block th:include="fragments/sidebar :: sidebar"></th:block> /*/-->
+        <div class="col-sm-10 main">
+            <h2>Dashboard</h2>
+
+            <!--<div class="row">-->
+                <!--<div class="col-sm-4">-->
+                    <!--<div class="hovereffect_main">-->
+                        <!--<img class="img-responsive myimage" src="../static/images/notification.png" alt="" th:src="@{~/images/notification.png}"/>-->
+                        <!--<div class="overlay">-->
+                            <!--<h1 class="bold" th:text="${incidentCount}">Notification.</h1>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-sm-4">-->
+                    <!--<div class="hovereffect_main">-->
+                        <!--<img class="img-responsive myimage" src="../static/images/monitor.png" alt="" th:src="@{~/images/monitor.png}"/>-->
+                        <!--<div class="overlay">-->
+                            <!--<h1 class="bold" th:text="${activeCount}">Active.</h1>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-sm-4">-->
+                    <!--<div class="hovereffect_main">-->
+                        <!--<img class="img-responsive myimage" src="../static/images/pause.png" alt="" th:src="@{~/images/pause.png}"/>-->
+                        <!--<div class="overlay">-->
+                            <!--<h1 class="bold" th:text="${pausedCount}">Pause.</h1>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#1" data-toggle="tab">New Request(s)</a>
+                </li>
+            </ul>
+            <div class="tab-content topspace">
+                <div class="tab-pane active" id = "1">
+                    <table id="notificationsPending" class="table table-striped display">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Request Type</th>
+                            <th>Description</th>
+                            <th>Date of Request</th>
+                            <th class="sorting-disabled"></th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="notification : ${notifications}">
+                            <td><span class="glyphicon glyphicon-exclamation-sign" style="color:red;"></span></td>
+                            <td th:text="${notification.notificationType}">Type</td>
+                            <td th:text="${notification.description}">Description</td>
+                            <td th:text="${notification.dateCreated}">Date of Request</td>
+                            <td>
+                                <form th:action="${'/accountApproval/' + notification.id}">
+                                    <input type="submit" class="btn btn-warning btn-block" value="View"/>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

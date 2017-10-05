@@ -60,8 +60,8 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         loadProducts();
-        loadUsers();
         loadRoles();
+        loadUsers();
         assignUsersToUserRole();
         assignUsersToAdminRole();
         loadTrainingType();
@@ -92,24 +92,39 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         User user1 = new User();
         user1.setUsername("user");
         user1.setPassword("user");
+        user1.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user1);
 
         User user2 = new User();
         user2.setUsername("admin");
         user2.setPassword("admin");
+        user2.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user2);
+
+        User user3 = new User();
+        user3.setUsername("trainer1");
+        user3.setPassword("trainer1");
+        user3.setAccountStatus("APPROVED");
+        Role role = roleService.findByRole("TRAINER");
+        user3.addRole(role);
+        userService.saveOrUpdate(user3);
 
     }
 
     private void loadRoles() {
         Role role = new Role();
-        role.setRole("USER");
+        role.setRole("TRAINEE");
         roleService.saveOrUpdate(role);
         log.info("Saved role" + role.getRole());
         Role adminRole = new Role();
         adminRole.setRole("ADMIN");
         roleService.saveOrUpdate(adminRole);
         log.info("Saved role" + adminRole.getRole());
+        Role trainerRole = new Role();
+        trainerRole.setRole("TRAINER");
+        roleService.saveOrUpdate(trainerRole);
+        log.info("Saved role" + trainerRole.getRole());
+
     }
     private void assignUsersToUserRole() {
         List<Role> roles = (List<Role>) roleService.listAll();
@@ -119,6 +134,10 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
             if (role.getRole().equalsIgnoreCase("USER")) {
                 users.forEach(user -> {
                     if (user.getUsername().equals("user")) {
+                        user.addRole(role);
+                        userService.saveOrUpdate(user);
+                    }
+                    if (user.getUsername().equals("trainer")) {
                         user.addRole(role);
                         userService.saveOrUpdate(user);
                     }

@@ -1,0 +1,22 @@
+#sidenav-left {
+    position: fixed;
+    left: 0;
+}
+
+/* Remove the navbar's default margin-bottom and rounded borders */
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.custom {
+    width: 200px;
+    height: 100%;
+    margin-left: -20px;
+    background-color: magenta;
+    border-right: 1px #e5e5e5 solid;
+}
+
+.bottomline{
+    border-bottom: 1px #e5e5e5 solid;
+}

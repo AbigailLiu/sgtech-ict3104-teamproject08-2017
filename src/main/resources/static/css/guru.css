@@ -1,3 +1,7 @@
+body{
+    height:100%;
+}
+
 input[type=submit] {
     background:none!important;
     border:none;
@@ -5,4 +9,51 @@ input[type=submit] {
     color: blue;
     text-decoration: underline;
     cursor:pointer;
+}
+
+
+.usercreateform{
+    width: 600px;
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+select#usercreatemonth {
+    overflow:hidden;
+    height: 100px;
+    -moz-border-radius: 9px 9px 9px 9px;
+    -webkit-border-radius: 9px 9px 9px 9px;
+    border-radius: 9px 9px 9px 9px;
+    box-shadow: 1px 1px 11px #330033;
+    background: #FFFFFF no-repeat scroll 319px center;
+}
+
+select#usercreatecountry {
+    height: 100px;
+    overflow:hidden;
+    -moz-border-radius: 9px 9px 9px 9px;
+    -webkit-border-radius: 9px 9px 9px 9px;
+    border-radius: 9px 9px 9px 9px;
+    box-shadow: 1px 1px 11px #330033;
+    background: #FFFFFF no-repeat scroll 319px center;
+}
+
+select#usercreategender {
+    overflow:hidden;
+    height: 100px;
+    -moz-border-radius: 9px 9px 9px 9px;
+    -webkit-border-radius: 9px 9px 9px 9px;
+    border-radius: 9px 9px 9px 9px;
+    box-shadow: 1px 1px 11px #330033;
+    background: #FFFFFF no-repeat scroll 319px center;
+}
+
+.sorting-disabled {
+    background-image: none !important;
+}
+
+.topspace {
+    margin-top: 5%;
+    padding-top: 5%;
 }

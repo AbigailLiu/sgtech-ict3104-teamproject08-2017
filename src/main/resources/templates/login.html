@@ -1,36 +1,128 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login Form</title>
+    <title>LifeStyle Sport Training Providing System</title>
     <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+
+    <script th:inline="javascript">
+        function checkUsername() {
+            var x = document.getElementById("un").value;
+            if (x != ""){
+                var xhttp = new XMLHttpRequest();
+                var target = "/jersey/rest/register/checkusername/"+x;
+                xhttp.open("GET", target , false);
+                xhttp.send();
+
+                var response = xhttp.responseText;
+                if (response == "fail"){
+                    document.getElementById("divformcheck").style.display = "block";
+                    document.getElementById("formcheck").innerText = "Username already in used.";
+                }else{
+                    document.getElementById("divformcheck").style.display="none";
+                }
+            }
+        }
+    </script>
+
+    <link href="../static/css/login.css"
+          th:href="@{/css/login.css}" rel="stylesheet" media="screen"/>
 </head>
 <body>
 <div class="container">
-    <!--/*/ <th:block th:include="fragments/header :: header"></th:block> /*/-->
-    <div th:if="${param.error}">
-        <label style="color:red">Invalid username and password.</label>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-login">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form id="login-form" th:action="@{/login}" method="post" role="form" style="display: block;">
+                                <div th:if="${param.error}">
+                                    <div class="alert alert-danger" role="alert">
+                                        <strong>Invalid username and password.</strong>
+                                    </div>
+                                </div>
+                                <h2>LOGIN</h2>
+                                <div class="form-group">
+                                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password" required="required"/>
+                                </div>
+                                <div class="col-xs-6 form-group pull-left checkbox">
+                                    <input id="checkbox1" type="checkbox" name="remember"/>
+                                    <label for="checkbox1">Remember Me</label>
+                                </div>
+                                <div class="col-xs-6 pull-right">
+                                    <input type="submit" name="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In"/>
+                                </div>
+                            </form>
+                            <form id="register-form" th:object="${user}" th:action="@{/newRegister}" method="post" role="form" style="display: none;">
+                                <div>
+                                    <div id="divformcheck" class="alert alert-danger" role="alert" style="display: none;">
+                                        <p id="formcheck">Hello</p>
+                                    </div>
+                                </div>
+                                <h2>REGISTER</h2>
+                                <input type="hidden" th:field="*{id}"/>
+                                <input type="hidden" th:field="*{version}"/>
+                                <input type="hidden" th:field="*{accountStatus}"/>
+                                <div class="form-group">
+                                    <p>I want to register as a...
+                                        <select style="padding-left: 5px;" tabindex="1" name="roles" th:field="*{trole}">
+                                            <option th:value="Trainer">Trainer</option>
+                                            <option th:value="Trainee">Trainee</option>
+                                        </select>
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="firstname" id="firstname" tabindex="2" class="form-control" placeholder="First Name" th:field="*{firstName}" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="lastname" id="lastname" tabindex="3" class="form-control" placeholder="Last Name" th:field="*{lastName}" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="username" id="un" tabindex="4" class="form-control" placeholder="Username" th:field="*{username}" onblur="checkUsername()" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" name="email" id="email" tabindex="5" class="form-control" placeholder="Email Address" th:field="*{email}" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="password" id="pw" tabindex="6" class="form-control" placeholder="Password" th:field="*{password}" required="required"/>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" name="confirm-password" id="confirm-password" tabindex="7" class="form-control" placeholder="Confirm Password"/>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="register-submit" id="register-submit" tabindex="8" class="form-control btn btn-register" value="Register Now"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6 tabs">
+                            <a href="#" class="active" id="login-form-link"><div class="login">LOGIN</div></a>
+                        </div>
+                        <div class="col-xs-6 tabs">
+                            <a href="#" id="register-form-link"><div class="register">REGISTER</div></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div th:if="${param.logout}">
-        <label>
-            You have been logged out.
-        </label>
-    </div>
-
-    <form th:action="@{/login}" method="post">
-
-        <table class="table table-striped">
-            <tr>
-                <td><label> User Name : <input type="text" name="username"/> </label></td>
-            </tr>
-            <tr>
-                <td><label> Password : <input type="password" name="password"/> </label></td>
-            </tr>
-            <tr>
-                <td> <button type="submit" class="btn btn-default">Sign In</button></td>
-            </tr>
-        </table>
-
-    </form>
 </div>
+<footer>
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1 text-center">
+            <h6 style="font-size:14px;font-weight:100;color: #fff;">Team 8 LifeStyle Sport Training Providing System</h6>
+        </div>
+    </div>
+</footer>
 </body>
 </html>
