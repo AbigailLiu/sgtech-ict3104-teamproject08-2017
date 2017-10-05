@@ -1,10 +1,15 @@
 package com.lifestyle.stps.Controllers;
 
+import com.lifestyle.stps.entities.PersonalCalendar;
 import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.entities.TrainingType;
+import com.lifestyle.stps.services.PersonalCalService;
 import com.lifestyle.stps.services.ProductService;
 import com.lifestyle.stps.services.TrainingTypeService;
+import com.lifestyle.stps.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +27,9 @@ public class IndexController {
     //Training Type
     private TrainingTypeService TTypeService;
 
+    //Personal Calendar
+    private PersonalCalService MyCalService;
+
     @Autowired
     public void setProductService(ProductService productService){
         this.productService = productService;
@@ -30,6 +38,11 @@ public class IndexController {
     @Autowired
     public void setTrainingTypeService(TrainingTypeService trainingTypeService){
         this.TTypeService = trainingTypeService;
+    }
+
+    @Autowired
+    public void setMyCalService(PersonalCalService myPersonalCalService){
+        this.MyCalService = myPersonalCalService;
     }
 
 
@@ -83,6 +96,7 @@ public class IndexController {
         return "redirect:/products";
     }
 
+    //Add Bu Mun Han
     //For Listing all Training Type
     @RequestMapping(value = "/trainingTypes", method = RequestMethod.GET)
     public String listTT(Model model){
@@ -93,22 +107,55 @@ public class IndexController {
     //For Add Training Type
     @RequestMapping("trainingType/new")
     public String newTrainingType(Model model){
-        model.addAttribute("trainType", new TrainingType());
+        model.addAttribute("trainTypeForm", new TrainingType());
         return "addTrainingType";
     }
 
-    @RequestMapping(value = "trainType", method = RequestMethod.POST)
+    //After the users click submit
+    @RequestMapping(value = "trainTypeSubmit", method = RequestMethod.POST)
     public String addTrainingType(TrainingType trainingType){
 
         TTypeService.saveTrainingType(trainingType);
 
-        return "redirect:/trainType/" + trainingType.getId();
+        return "redirect:/trainingType/" + trainingType.getId();
     }
 
-    @RequestMapping("trainType/{id}")
+    //Get particular training type
+    @RequestMapping("trainingType/{id}")
     public String showTrainingType(@PathVariable Integer id, Model model){
         model.addAttribute("trainType", TTypeService.getTrainingTypeID(id));
         return "trainingTypeShow";
+    }
+
+    //For Listing all schedule
+    @RequestMapping(value = "/traningCalendar", method = RequestMethod.GET)
+    public String listPCal(Model model){
+        model.addAttribute("myCal", MyCalService.listAllSchedule());
+        return "MyPersonalCalendar";
+    }
+
+    //For Add New Schedule
+    @RequestMapping("schedule/new")
+    public String newSchedule(Model model){
+        model.addAttribute("scheduleForm", new PersonalCalendar());
+        model.addAttribute("trainType", TTypeService.listAllTType());
+        return "addNewSchedule";
+    }
+
+    //After the users click submit
+    @RequestMapping(value = "scheduleFormSubmit", method = RequestMethod.POST)
+    public String addSchedule(PersonalCalendar PCal){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
+        PCal.setUserName(name);
+        MyCalService.saveSchedule(PCal);
+        return "redirect:/MyPersonalCalendar/" + PCal.getId();
+    }
+
+    @RequestMapping("MyPersonalCalendar/{id}")
+    public String showSchedule(@PathVariable Integer id, Model model){
+        model.addAttribute("myCal", MyCalService.listAllSchedule());
+        return "MyPersonalCalendar";
     }
 
 
