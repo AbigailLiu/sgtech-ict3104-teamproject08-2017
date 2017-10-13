@@ -4,9 +4,7 @@ package com.lifestyle.stps.ApplicationLoader;
 import com.lifestyle.stps.Repositories.PersonalCalRepository;
 import com.lifestyle.stps.Repositories.ProductRepository;
 import com.lifestyle.stps.Repositories.TrainingTypeRepository;
-
 import com.lifestyle.stps.entities.*;
-
 import com.lifestyle.stps.services.RoleService;
 import com.lifestyle.stps.services.UserService;
 import org.apache.log4j.Logger;
@@ -66,7 +64,6 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         loadUsers();
         assignUsersToUserRole();
         assignUsersToAdminRole();
-        assignUsersToTrainerRole();
         loadTrainingType();
         loadSchedule();
     }
@@ -94,21 +91,18 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
 
     private void loadUsers() {
         User user1 = new User();
-        user1.setid(1);
         user1.setUsername("user");
         user1.setPassword("user");
         user1.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user1);
 
         User user2 = new User();
-        user2.setid(2);
         user2.setUsername("admin");
         user2.setPassword("admin");
         user2.setAccountStatus("APPROVED");
         userService.saveOrUpdate(user2);
 
         User user3 = new User();
-        user3.setid(3);
         user3.setUsername("trainer1");
         user3.setPassword("trainer1");
         user3.setAccountStatus("APPROVED");
@@ -116,21 +110,6 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         user3.addRole(role);
         userService.saveOrUpdate(user3);
 
-        User user4= new User();
-        user4.setid(4);
-        user4.setUsername("mich");
-        user4.setPassword("mich");
-        user4.setEmail("mich@gmail.com");
-        user4.setFirstName("mich");
-        user4.setLastName("g");
-        user4.setDay(1);
-        user4.setMonth(12);
-        user4.setPhoneNumber(123456);
-        user4.setGender("Others");
-        user4.setCountry("Tiongland");
-        user4.setHomeAddress("Changchun");
-        user4.setPostalCode(123456);
-        userService.saveOrUpdate(user4);
     }
 
     private void loadRoles() {
@@ -159,23 +138,7 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
                         user.addRole(role);
                         userService.saveOrUpdate(user);
                     }
-                    if (user.getUsername().equals("mich")) {
-                        user.addRole(role);
-                        userService.saveOrUpdate(user);
-                    }
-                });
-            }
-        });
-    }
-    private void assignUsersToTrainerRole() {
-        List<Role> roles = (List<Role>) roleService.listAll();
-        List<User> users = (List<User>) userService.listAll();
-
-        roles.forEach(role -> {
-            if (role.getRole().equalsIgnoreCase("TRAINER")) {
-                users.forEach(user -> {
-
-                    if (user.getUsername().equals("trainer1")) {
+                    if (user.getUsername().equals("trainer")) {
                         user.addRole(role);
                         userService.saveOrUpdate(user);
                     }
@@ -202,11 +165,6 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     //Load Training Type
     private void loadTrainingType() {
         TrainingType tt1 = new TrainingType();
-        tt1.setType("Yoga");
-        tt1.setId(1);
-        tt1.setName("H20");
-        tt1.setDetails("Mon night @ 2pm ");
-
         tt1.setType("Testing 1");
 
         TrainingType tt2 = new TrainingType();
@@ -224,29 +182,24 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         PC1.setUserName("user");
         PC1.setTrainingDateStart("2017-10-28");
         PC1.setTrainingTimeStart("14:00:00");
-        PC1.setTrainingDateEnd("2017-10-28");
-        PC1.setTrainingTimeEnd("17:00:00");
         PC1.setTrainingType("Testing 1");
         PC1.setTrainingDesc("Test");
         PC1.setTrainingVenue("Test");
+       PC1.setTrainingPrice(1211312);
 
 
         PersonalCalendar PC2 = new PersonalCalendar();
-        PC2.setUserName("user");
+        PC2.setUserName("admin");
         PC2.setTrainingDateStart("2017-10-29");
         PC2.setTrainingTimeStart("14:00:00");
-        PC2.setTrainingDateEnd("2017-10-29");
-        PC2.setTrainingTimeEnd("15:00:00");
         PC2.setTrainingType("Testing 1");
         PC2.setTrainingDesc("Test");
         PC2.setTrainingVenue("Test");
+        PC2.setTrainingPrice(123123);
 
         personalCalRepo.save(PC1);
         personalCalRepo.save(PC2);
         log.info("Saved Schedule - id: " + PC1.getId());
         log.info("Saved Schedule - id: " + PC2.getId());
     }
-
-
-
 }
