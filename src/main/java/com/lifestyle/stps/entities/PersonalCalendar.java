@@ -22,9 +22,17 @@ public class PersonalCalendar {
 
     private String training_Time_Start;
 
+    private String training_Time_End;
+
     private String training_Venue;
 
-    private int training_Price;
+    private double training_Price;
+
+    //New Field
+    private int training_capactiy;
+    private String training_category;
+    private String training_status;
+
 
     //For ID
     public Integer getId() {
@@ -74,6 +82,14 @@ public class PersonalCalendar {
         this.training_Time_Start = TrainingTimeStart;
     }
 
+    //For Training Time End
+    public String getTrainingTimeEnd() {
+        return training_Time_End;
+    }
+    public void setTrainingTimeEnd(String TrainingTimeEnd) {
+        this.training_Time_End = TrainingTimeEnd;
+    }
+
     //For Training Venue
     public String getTrainingVenue() {
         return training_Venue;
@@ -82,7 +98,31 @@ public class PersonalCalendar {
         this.training_Venue = TrainingVenue;
     }
 
+    //For Training Capacity
+    public int getTrainingCapacity() {
+        return training_capactiy;
+    }
+    public void setTrainingCapacity(int TrainingCapicity) {
+        this.training_capactiy = TrainingCapicity;
+    }
+
+    //For Training category
+    public String getTrainingCategory() {
+        return training_category;
+    }
+    public void setTrainingCategory(String TrainingCategory) {
+        this.training_category = TrainingCategory;
+    }
+
+    //For Training Status
+    public String getTrainingStatus() {
+        return training_status;
+    }
+    public void setTrainingStatus(String TrainingStatus) {
+        this.training_status = TrainingStatus;
+    }
+
     //For Training Price
-    public int getTrainingPrice(){return training_Price;}
-    public void setTrainingPrice(int Training_Price){this.training_Price=training_Price;}
+    public double getTrainingPrice(){return training_Price;}
+    public void setTrainingPrice(double Training_Price){this.training_Price = Training_Price;}
 }

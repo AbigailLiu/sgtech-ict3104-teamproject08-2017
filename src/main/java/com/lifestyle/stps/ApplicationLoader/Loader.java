@@ -182,20 +182,28 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         PC1.setUserName("user");
         PC1.setTrainingDateStart("2017-10-28");
         PC1.setTrainingTimeStart("14:00:00");
+        PC1.setTrainingTimeEnd("15:00:00");
         PC1.setTrainingType("Testing 1");
-        PC1.setTrainingDesc("Test");
-        PC1.setTrainingVenue("Test");
-       PC1.setTrainingPrice(1211312);
-
+        PC1.setTrainingDesc("TestDesc");
+        PC1.setTrainingVenue("TestVenue");
+        PC1.setTrainingPrice(20.3);
+        PC1.setTrainingCapacity(15);
+        PC1.setTrainingCategory("Group");
+        PC1.setTrainingStatus("Disapprove");
 
         PersonalCalendar PC2 = new PersonalCalendar();
         PC2.setUserName("admin");
         PC2.setTrainingDateStart("2017-10-29");
         PC2.setTrainingTimeStart("14:00:00");
+        PC2.setTrainingTimeEnd("15:00:00");
         PC2.setTrainingType("Testing 1");
-        PC2.setTrainingDesc("Test");
-        PC2.setTrainingVenue("Test");
-        PC2.setTrainingPrice(123123);
+        PC2.setTrainingDesc("TestDesc");
+        PC2.setTrainingVenue("TestVenue");
+        PC2.setTrainingPrice(20.2);
+        //New Field
+        PC2.setTrainingCapacity(15);
+        PC2.setTrainingCategory("Group");
+        PC2.setTrainingStatus("Disapprove");
 
         personalCalRepo.save(PC1);
         personalCalRepo.save(PC2);

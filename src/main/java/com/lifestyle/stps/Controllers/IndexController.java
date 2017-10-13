@@ -175,6 +175,7 @@ public class IndexController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName(); //get logged in username
         PCal.setUserName(name);
+        PCal.setTrainingStatus("Disapprove");
         MyCalService.saveSchedule(PCal);
         return "redirect:/MyPersonalCalendar/" + PCal.getId();
        // return "redirect:/MyPersonalCalendar/" + "2";
