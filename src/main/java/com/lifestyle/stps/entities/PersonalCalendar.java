@@ -22,12 +22,9 @@ public class PersonalCalendar {
 
     private String training_Time_Start;
 
-    private String training_Date_End;
-
-    private String training_Time_End;
-
     private String training_Venue;
 
+    private int training_Price;
 
     //For ID
     public Integer getId() {
@@ -77,22 +74,6 @@ public class PersonalCalendar {
         this.training_Time_Start = TrainingTimeStart;
     }
 
-    //For Training Date End
-    public String getTrainingDateEnd() {
-        return training_Date_End;
-    }
-    public void setTrainingDateEnd(String TrainingDateEnd) {
-        this.training_Date_End = TrainingDateEnd;
-    }
-
-    //For Training Time End
-    public String getTrainingTimeEnd() {
-        return training_Time_End;
-    }
-    public void setTrainingTimeEnd(String TrainingTimeEnd) {
-        this.training_Time_End = TrainingTimeEnd;
-    }
-
     //For Training Venue
     public String getTrainingVenue() {
         return training_Venue;
@@ -100,4 +81,8 @@ public class PersonalCalendar {
     public void setTrainingVenue(String TrainingVenue) {
         this.training_Venue = TrainingVenue;
     }
+
+    //For Training Price
+    public int getTrainingPrice(){return training_Price;}
+    public void setTrainingPrice(int Training_Price){this.training_Price=training_Price;}
 }

@@ -1,20 +1,9 @@
 package com.lifestyle.stps.Controllers;
 
-import com.lifestyle.stps.entities.PersonalCalendar;
-import com.lifestyle.stps.entities.Product;
-import com.lifestyle.stps.entities.TrainingType;
-import com.lifestyle.stps.services.PersonalCalService;
-import com.lifestyle.stps.services.ProductService;
-import com.lifestyle.stps.services.TrainingTypeService;
-import com.lifestyle.stps.services.UserService;
-import com.lifestyle.stps.Repositories.NotificationRepository;
 import com.lifestyle.stps.entities.*;
 import com.lifestyle.stps.services.*;
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import org.aspectj.weaver.ast.Not;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -23,9 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sun.net.www.content.text.Generic;
 
 import javax.jws.WebParam;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.util.*;
 
 /**
  * Created by User 1 on 20/9/2017.
@@ -63,31 +55,15 @@ public class IndexController {
         this.TTypeService = trainingTypeService;
     }
 
-
-//    @Autowired
-//    private JavaMailSender mailSender;
-//    public void sendSimpleMail(String inputEmail) throws Exception {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom("ict3104scrum@gmail.com");
-//        message.setTo(inputEmail);
-//        message.setSubject(" CONGRATULATIONS ");
-//        message.setText(" you are registered! ");
-//        mailSender.send(message);
-//    }
-    @RequestMapping("/")
-    String index(){
-//        try {
-//            sendSimpleMail("micgohsl94@gmail.com");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return "userregisteredemail";
-            return "index";
-    }
-
     @Autowired
     public void setMyCalService(PersonalCalService myPersonalCalService){
         this.MyCalService = myPersonalCalService;
+    }
+
+
+    @RequestMapping("/")
+    String index() {
+        return "index";
     }
 
     @RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.GET})
@@ -96,6 +72,7 @@ public class IndexController {
         user.setAccountStatus("PENDING");
         model.addAttribute("user", user);
         return "login";
+      //  return "MyPersonalCalendar";
     }
 
     @RequestMapping("product/new")
@@ -156,7 +133,6 @@ public class IndexController {
     @RequestMapping(value = "trainTypeSubmit", method = RequestMethod.POST)
     public String addTrainingType(TrainingType trainingType){
 
-
         TTypeService.saveTrainingType(trainingType);
 
         return "redirect:/trainingType/" + trainingType.getId();
@@ -165,16 +141,24 @@ public class IndexController {
     //Get particular training type
     @RequestMapping("trainingType/{id}")
     public String showTrainingType(@PathVariable Integer id, Model model){
-
-
         model.addAttribute("trainType", TTypeService.getTrainingTypeID(id));
         return "trainingTypeShow";
     }
 
+    @RequestMapping("user/new")
+    public String newUser(Model model) {
+        model.addAttribute("user", new User());
+        return "usercreateform";
+    }
     //For Listing all schedule
     @RequestMapping(value = "/traningCalendar", method = RequestMethod.GET)
     public String listPCal(Model model){
         model.addAttribute("myCal", MyCalService.listAllSchedule());
+        Authentication auth2 = SecurityContextHolder.getContext().getAuthentication();
+        String name2 = auth2.getName(); //get logged in username
+        model.addAttribute("username", name2);
+        model.addAttribute("trainType", TTypeService.listAllTType());
+        model.addAttribute("scheduleForm", new PersonalCalendar());
         return "MyPersonalCalendar";
     }
 
@@ -182,7 +166,6 @@ public class IndexController {
     @RequestMapping("schedule/new")
     public String newSchedule(Model model){
         model.addAttribute("scheduleForm", new PersonalCalendar());
-        model.addAttribute("trainType", TTypeService.listAllTType());
         return "addNewSchedule";
     }
 
@@ -194,19 +177,45 @@ public class IndexController {
         PCal.setUserName(name);
         MyCalService.saveSchedule(PCal);
         return "redirect:/MyPersonalCalendar/" + PCal.getId();
+       // return "redirect:/MyPersonalCalendar/" + "2";
     }
 
+    private Logger log = Logger.getLogger(IndexController.class);
     @RequestMapping("MyPersonalCalendar/{id}")
     public String showSchedule(@PathVariable Integer id, Model model){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
         model.addAttribute("myCal", MyCalService.listAllSchedule());
+        log.info("LIST ALL LA"+ MyCalService.listAllSchedule());
+        log.info("MAPLA"+model.asMap());
+        Map<String,Object > map = model.asMap();
+
+        // Iterating over keys only
+        for (String key : map.keySet()) {
+            System.out.println("Key = " + key);
+        }
+        // Iterating over values only
+//        for(int i=0;i<((Collection<Object>)map.values()).size();i++){
+//            log.info("i values"+i);
+//        for (Object value : map.values()) {
+////            Object mapArray[];
+////            mapArray = map.values().toArray();
+////            System.out.println("MAPARRAY"+  mapArray.toString());
+//
+////            if ((((ArrayList<PersonalCalendar>) value).get(i).getUserName()) == name) {
+//                System.out.println(((ArrayList<PersonalCalendar>) value).get(id-1).getTrainingDateStart());
+////            } else {
+////                System.out.println("Not matched");
+//            }
+
+
+        model.addAttribute("username", name);
+        model.addAttribute("trainType", TTypeService.listAllTType());
+        model.addAttribute("scheduleForm", new PersonalCalendar());
+
         return "MyPersonalCalendar";
     }
 
-    @RequestMapping("user/new")
-    public String newUser(Model model) {
-        model.addAttribute("user", new User());
-        return "usercreateform";
-    }
 
     @RequestMapping(value = "user", method = RequestMethod.POST)
     public String saveUser(User user) {

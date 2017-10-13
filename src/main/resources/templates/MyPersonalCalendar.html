@@ -2,61 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head lang="en">
     <meta charset='utf-8' />
-
+    <link href="../static/css/commonSidebarCss.css" th:href="@{/css/commonSidebarCss.css}" rel="stylesheet"/>
     <title>My Personal Calendar</title>
     <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
 
+
     <!-- Calendar Script -->
-    <link href="../static/css/fullcalendar.min.css" th:href="@{/css/fullcalendar.min.css}" rel="stylesheet"/>
-    <link href="../static/css/fullcalendar.print.min.css" th:href="@{/css/fullcalendar.print.min.css}" rel="stylesheet" media="print"/>
-
-    <script src="//code.jquery.com/jquery.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.1.1/fullcalendar.min.js"></script>
-    <script src="/shared/js/bootstrapmodal.min.js"></script>
-
-    <script type="text/javascript" th:inline="javascript">
-        /*<![CDATA[*/
-        var myEvents = [];
-
-        var theList = [[${myCal}]]
-        for (i = 0; i < theList.length; i++) {
-            scheudule(String(Object.values(theList[i])[6]), String(Object.values(theList[i])[7]), String(Object.values(theList[i])[2]), String(Object.values(theList[i])[1]),
-                String(Object.values(theList[i])[5]), String(Object.values(theList[i])[4]));
-        }
-
-        function scheudule(titles, venue, startDate, endDate, startTime, EndTime)
-        {
-            eventTitle = titles + " At " + venue;
-            eventStart = startDate + "T" + startTime;
-            eventEnd = endDate + "T" + EndTime;
-
-            myEvents.push({
-                title: eventTitle,
-                start: eventStart,
-                end: eventEnd
-            });
-        }
-
-        pushevent();
-
-        function pushevent()
-        {
-            $(document).ready(function() {
-                $('#calendar').fullCalendar({
-                    defaultDate: '2017-09-12',
-                    editable: false,
-                    eventLimit: true, // allow "more" link when too many events
-                    events: myEvents
-                });
-
-            });
-        }
-
-        /*]]>*/
-    </script>
-
-
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.css" type="text/css" rel="stylesheet" />
 
     <style>
         #calendar {
@@ -65,19 +18,18 @@
         }
 
     </style>
-
 </head>
+
 <body>
-<div class="container">
-    <!--/*/ <th:block th:include="fragments/header :: header"></th:block> /*/-->
-
+<div class="title" style="display: inline-block; overflow: hidden;">
     <h2>My Personal Calendar</h2>
+    <!-- Trigger the modal with a button -->
+    <!--<form class="form-horizontal" th:action="@{/schedule/new}" method="post">-->
+        <!--<div class="row" style="margin: 0px;">-->
+            <!--<button type="submit" class="btn btn-default">New Schedule</button>-->
+        <!--</div>-->
+    <!--</form>-->
 
-    <form class="form-horizontal" th:action="@{/schedule/new}" method="post">
-        <div class="row" style="margin: 0px;">
-            <button type="submit" class="btn btn-default">New Schedule</button>
-        </div>
-    </form>
 
     <br/>
 
@@ -88,19 +40,245 @@
     <!-- //If not empty -->
     <div th:if="${not #lists.isEmpty(myCal)}">
         <form th:action="@{/logout}" method="post">
-            <div id='calendar'></div>
+            <div id='bootstrapModalFullCalendar'></div>
             <!-- <div class="col-sm-2" style="padding-top: 30px;">
                      <span sec:authorize="isAuthenticated()">
                     <input type="submit" value="Sign Out" />
                                </span>
             </div> -->
         </form>
-
     </div>
-
     <br />
-
 </div>
+
+<!-- For Add Event -->
+<div id="CalAddEevent" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+            </div>
+            <form class="form-horizontal" style="margin-left: 10px;" th:object="${scheduleForm}" th:action="@{/scheduleFormSubmit}" method="post">
+                <input type="hidden" th:field="*{id}"/>
+                <br />
+                <!-- Training Type -->
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Training Type : </label>
+                    <div class="col-sm-7">
+                        <select  class="form-control" required="required" name="TType" id="TType" th:field="*{TrainingType}">
+                            <option disabled="disabled" selected="selected" th:value="default" > -- Please select one of the option -- </option>
+                            <option th:each="TT : ${trainType}" th:value="${TT.type}"
+                                    th:text="${TT.type}" >
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Training Description -->
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Training Description : </label>
+                    <div class="col-sm-7">
+                        <textarea rows="4" cols="50" class="form-control" th:field="*{TrainingDesc}" th:required="required"></textarea>
+                    </div>
+                </div>
+
+
+                <input type="hidden" id="myspan" th:field="*{TrainingDateStart}"/>
+                <!-- Training Date Start -->
+                <!-- <div class="form-group">
+                    <label class="col-sm-2 control-label">Training Date (Start) : </label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" th:required="required"/>
+                    </div>
+                </div> -->
+
+                <!-- Training Time Start -->
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Training Time (Start) : </label>
+                    <div class="col-sm-7">
+                        <!-- <input class="form-control" type="text" id="time" name="trainingTime" th:field="*{TrainingTimeStarts}" th:required="required"/> -->
+                        <!-- <input id="demo1" placeholder="1234" name="trainingTime" th:field="*{TrainingTimeStart}" th:required="required"/> -->
+                        <select  class="form-control" required="required" name="TTS" id="TTS" th:field="*{TrainingTimeStart}">
+                            <option disabled="disabled" selected="selected" th:value="default" > -- Please select one of the option -- </option>
+                            <option value="00:00:00">00:00:00</option>
+                            <option value="01:30:00">00:30:00</option>
+                            <option value="01:00:00">01:00:00</option>
+                            <option value="01:30:00">01:30:00</option>
+                            <option value="02:00:00">02:00:00</option>
+                            <option value="02:30:00">02:30:00</option>
+                            <option value="03:00:00">03:00:00</option>
+                            <option value="03:30:00">03:30:00</option>
+                            <option value="04:00:00">04:00:00</option>
+                            <option value="04:30:00">04:30:00</option>
+                            <option value="05:00:00">05:00:00</option>
+                            <option value="05:30:00">05:30:00</option>
+                            <option value="06:00:00">06:00:00</option>
+                            <option value="06:30:00">06:30:00</option>
+                            <option value="07:00:00">07:00:00</option>
+                            <option value="07:30:00">07:30:00</option>
+                            <option value="08:00:00">08:00:00</option>
+                            <option value="08:30:00">08:30:00</option>
+                            <option value="09:00:00">09:00:00</option>
+                            <option value="09:30:00">09:30:00</option>
+                            <option value="10:00:00">10:00:00</option>
+                            <option value="10:30:00">10:30:00</option>
+                            <option value="11:00:00">11:00:00</option>
+                            <option value="11:30:00">11:30:00</option>
+                            <option value="12:00:00">12:00:00</option>
+                            <option value="12:30:00">12:30:00</option>
+                            <option value="13:00:00">13:00:00</option>
+                            <option value="13:30:00">13:30:00</option>
+                            <option value="14:00:00">14:00:00</option>
+                            <option value="14:30:00">14:30:00</option>
+                            <option value="15:00:00">15:00:00</option>
+                            <option value="15:30:00">15:30:00</option>
+                            <option value="16:00:00">16:00:00</option>
+                            <option value="16:30:00">16:30:00</option>
+                            <option value="17:00:00">17:00:00</option>
+                            <option value="17:30:00">17:30:00</option>
+                            <option value="18:00:00">18:00:00</option>
+                            <option value="18:30:00">18:30:00</option>
+                            <option value="19:00:00">19:00:00</option>
+                            <option value="19:30:00">19:30:00</option>
+                            <option value="20:00:00">20:00:00</option>
+                            <option value="20:30:00">20:30:00</option>
+                            <option value="21:00:00">21:00:00</option>
+                            <option value="21:30:00">21:30:00</option>
+                            <option value="22:00:00">22:00:00</option>
+                            <option value="22:30:00">22:30:00</option>
+                            <option value="23:00:00">23:00:00</option>
+                            <option value="23:30:00">23:30:00</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Training Venue -->
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Training Venue : </label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" name="trainingVenue" th:field="*{TrainingVenue}" th:required="required"/>
+                    </div>
+                </div>
+
+
+                <!-- Training Price -->
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Training Price : </label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" name="trainingPrice" th:field="*{TrainingPrice}" th:required="required"/>
+                    </div>
+                </div>
+
+                <div class="row" style="margin: 0px;">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+                <br />
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- For more Calendar description -->
+<div id="CalMoreDesc" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+                <h1 style="display: inline">Title: </h1><h2 style="display: inline" id="modalTitle" class="modal-title"></h2>
+            </div>
+            <div id="modalBody" class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.2/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.6.1/fullcalendar.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    var myEvents = [];
+
+    var theList = [[${myCal}]]
+    for (i = 0; i < theList.length; i++) {
+        scheudule(String(Object.values(theList[i])[5]), String(Object.values(theList[i])[6]), String(Object.values(theList[i])[1]),
+            String(Object.values(theList[i])[4]), String(Object.values(theList[i])[7]), String(Object.values(theList[i])[2]) );
+    }
+
+    function scheudule(titles, venue, startDate, startTime, userN, Desc)
+    {
+        if (userN == [[${username}]])
+        {
+            eventTitle = titles + " At " + venue;
+            eventStart = startDate + "T" + startTime;
+            myEvents.push({
+                title: eventTitle,
+                start: eventStart,
+                description: Desc
+            });
+        }
+    }
+
+    pushevent();
+
+    function pushevent()
+    {
+        $(document).ready(function() {
+            /* $('#calendar').fullCalendar({
+                defaultDate: '2017-09-12',
+                selectable: true,
+                selectHelper: true,
+                height: 350,
+                eventLimit: true, // allow "more" link when too many events
+                events: myEvents,
+                header: {
+                    left: '',
+                    center: 'prev title next',
+                    right: ''
+                },
+                eventClick:  function(event, jsEvent, view) {
+                    $('#modalTitle').html(event.title);
+                    $('#modalBody').html(event.description);
+                    $('#eventUrl').attr('href',event.url);
+                    $('#fullCalModal').modal();
+                }
+            }); */
+            $('#bootstrapModalFullCalendar').fullCalendar({
+                defaultDate: '2017-09-12',
+                selectable: true,
+                selectHelper: true,
+                height: 350,
+                eventLimit: true, // allow "more" link when too many events
+                events: myEvents,
+                select: function (start, end, jsEvent, view) {
+                    document.getElementById("myspan").value = convert(start);
+                    $('#CalAddEevent').modal();
+                },
+                eventClick:  function(event, jsEvent, view) {
+                    $('#modalTitle').html(event.title);
+                    $('#modalBody').html(event.description);
+                    $('#CalMoreDesc').modal();
+                    return false;
+                }
+            });
+
+        });
+    }
+
+    function convert(str) {
+        var date = new Date(str),
+            mnth = ("0" + (date.getMonth()+1)).slice(-2),
+            day  = ("0" + date.getDate()).slice(-2);
+        return [ date.getFullYear(), mnth, day ].join("-");
+    }
+
+
+    /*]]>*/
+</script>
+    <th:block th:include="fragments/commondashboard :: commondashboard"></th:block>
 
 </body>
 </html>

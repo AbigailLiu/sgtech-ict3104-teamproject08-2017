@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org" xmlns:display="http://www.w3.org/1999/xhtml" >
+<head lang = "en">
+    <link href="../../static/css/commonSidebarCss.css" th:href="@{/css/commonSidebarCss.css}" rel="stylesheet"/>
+    <title>Lifestyle - Calendar</title>
+
+    <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
+    <!--/*/ <th:block th:include="fragments/datatableinc :: datatableinc"></th:block> /*/-->
+
+    <!--<script>-->
+        <!--$(document).ready(function(){-->
+            <!--$('#notificationsPending').DataTable();-->
+        <!--});-->
+    <!--</script>-->
+
+</head>
+
+<body>
+<div th:fragment="commondashboard">
+
+<div id='cssmenu'>
+    <ul>
+        <li><a href='#'><span>Calendar</span></a></li>
+        <li class='active has-sub'><a href='#'><span>Profile</span></a>
+            <ul>
+                <li class='has-sub'><a href='#'><span>View Profile</span></a>
+                    <!--<ul>-->
+                        <!--<li><a href='#'><span>Sub Product</span></a></li>-->
+                        <!--<li class='last'><a href='#'><span>Sub Product</span></a></li>-->
+                    <!--</ul>-->
+                </li>
+                <li class='has-sub'><a href='#'><span>Edit Profile</span></a>
+                    <!--<ul>-->
+                        <!--<li><a href='#'><span>Sub Product</span></a></li>-->
+                        <!--<li class='last'><a href='#'><span>Sub Product</span></a></li>-->
+                    <!--</ul>-->
+                </li>
+            </ul>
+        </li>
+        <li><a href='#'><span>Functionality</span></a></li>
+        <li class='last'><a href='#'><span>Functionality</span></a></li>
+    </ul>
+</div>
+</div>
+</body>
+</html>
