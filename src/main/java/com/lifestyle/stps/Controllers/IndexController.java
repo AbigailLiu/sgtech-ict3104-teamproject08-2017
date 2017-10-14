@@ -15,6 +15,7 @@ import com.lifestyle.stps.services.*;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.log4j.Logger;
 import org.aspectj.weaver.ast.Not;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -26,10 +27,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sun.net.www.content.text.Generic;
 
 import javax.jws.WebParam;
 import java.security.SecureRandom;
 import java.util.List;
+import java.lang.reflect.Array;
+import java.lang.reflect.ParameterizedType;
+import java.util.*;
 
 /**
  * Created by User 1 on 20/9/2017.
@@ -102,6 +107,7 @@ public class IndexController {
         user.setAccountStatus("PENDING");
         model.addAttribute("user", user);
         return "login";
+      //  return "MyPersonalCalendar";
     }
 
     @RequestMapping("product/new")
@@ -162,16 +168,9 @@ public class IndexController {
     @RequestMapping(value = "trainTypeSubmit", method = RequestMethod.POST)
     public String addTrainingType(TrainingType trainingType, final RedirectAttributes redirectAttributes){
 
-        TrainingType type = TTypeService.findByName(trainingType.getName());
-        if (type == null){
-            TTypeService.saveTrainingType(trainingType);
-        }else{
-            redirectAttributes.addFlashAttribute("msg", "Creation unsuccessful. Existing Training Type already exist.");
-            return "redirect:/trainingType/new";
-        }
+        TTypeService.saveTrainingType(trainingType);
 
-
-        return "redirect:/admintrainingmanagement";
+        return "redirect:/trainingType/" + trainingType.getId();
     }
 
     //Get particular training type
@@ -187,6 +186,11 @@ public class IndexController {
     @RequestMapping(value = "/traningCalendar", method = RequestMethod.GET)
     public String listPCal(Model model){
         model.addAttribute("myCal", MyCalService.listAllSchedule());
+        Authentication auth2 = SecurityContextHolder.getContext().getAuthentication();
+        String name2 = auth2.getName(); //get logged in username
+        model.addAttribute("username", name2);
+        model.addAttribute("trainType", TTypeService.listAllTType());
+        model.addAttribute("scheduleForm", new PersonalCalendar());
         return "MyPersonalCalendar";
     }
 
@@ -206,11 +210,41 @@ public class IndexController {
         PCal.setUserName(name);
         MyCalService.saveSchedule(PCal);
         return "redirect:/MyPersonalCalendar/" + PCal.getId();
+       // return "redirect:/MyPersonalCalendar/" + "2";
     }
 
     @RequestMapping("MyPersonalCalendar/{id}")
     public String showSchedule(@PathVariable Integer id, Model model){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String name = auth.getName(); //get logged in username
         model.addAttribute("myCal", MyCalService.listAllSchedule());
+        log.info("LIST ALL LA"+ MyCalService.listAllSchedule());
+        log.info("MAPLA"+model.asMap());
+        Map<String,Object > map = model.asMap();
+
+        // Iterating over keys only
+        for (String key : map.keySet()) {
+            System.out.println("Key = " + key);
+        }
+        // Iterating over values only
+//        for(int i=0;i<((Collection<Object>)map.values()).size();i++){
+//            log.info("i values"+i);
+//        for (Object value : map.values()) {
+////            Object mapArray[];
+////            mapArray = map.values().toArray();
+////            System.out.println("MAPARRAY"+  mapArray.toString());
+//
+////            if ((((ArrayList<PersonalCalendar>) value).get(i).getUserName()) == name) {
+//                System.out.println(((ArrayList<PersonalCalendar>) value).get(id-1).getTrainingDateStart());
+////            } else {
+////                System.out.println("Not matched");
+//            }
+
+
+        model.addAttribute("username", name);
+        model.addAttribute("trainType", TTypeService.listAllTType());
+        model.addAttribute("scheduleForm", new PersonalCalendar());
+
         return "MyPersonalCalendar";
     }
 

@@ -228,22 +228,20 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         PC1.setUserName("user");
         PC1.setTrainingDateStart("2017-10-28");
         PC1.setTrainingTimeStart("14:00:00");
-        PC1.setTrainingDateEnd("2017-10-28");
-        PC1.setTrainingTimeEnd("17:00:00");
         PC1.setTrainingType("Testing 1");
         PC1.setTrainingDesc("Test");
         PC1.setTrainingVenue("Test");
+       PC1.setTrainingPrice(1211312);
 
 
         PersonalCalendar PC2 = new PersonalCalendar();
-        PC2.setUserName("user");
+        PC2.setUserName("admin");
         PC2.setTrainingDateStart("2017-10-29");
         PC2.setTrainingTimeStart("14:00:00");
-        PC2.setTrainingDateEnd("2017-10-29");
-        PC2.setTrainingTimeEnd("15:00:00");
         PC2.setTrainingType("Testing 1");
         PC2.setTrainingDesc("Test");
         PC2.setTrainingVenue("Test");
+        PC2.setTrainingPrice(123123);
 
         personalCalRepo.save(PC1);
         personalCalRepo.save(PC2);
