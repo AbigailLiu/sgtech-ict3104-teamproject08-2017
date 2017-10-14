@@ -5,11 +5,8 @@ package com.lifestyle.stps.entities;
 import javax.persistence.*;
 
 @Entity
-public class TrainingType {
+public class TrainingType extends AbstractDomainClass {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
     private String type;
     private String details;
     private String name;

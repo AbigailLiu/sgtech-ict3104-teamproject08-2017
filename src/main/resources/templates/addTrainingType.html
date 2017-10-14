@@ -1,49 +1,59 @@
-<!--
-    Add Training Type page for only admin
-    Author : Munhan
-    Date : 30/9/2017
--->
-
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head lang="en">
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head lang = "en">
 
-    <title>Add training Type</title>
+    <title>Website Content Monitor</title>
 
     <!--/*/ <th:block th:include="fragments/headerinc :: head"></th:block> /*/-->
 </head>
-<body>
-<div class="container">
-    <!--/*/ <th:block th:include="fragments/header :: header"></th:block> /*/-->
 
-    <h2>Add Training Type</h2>
-    <div>
-        <form class="form-horizontal" th:object="${trainTypeForm}" th:action="@{/trainTypeSubmit}" method="post">
-            <input type="hidden" th:field="*{id}"/>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">Trainer Name:</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" th:field="*{name}" th:required="required"/>
+<body>
+<div class="container-fluid">
+    <div class="row content">
+        <!--/*/ <th:block th:include="fragments/sidebar :: sidebar"></th:block> /*/-->
+        <div class="col-sm-10 main">
+            <div th:if="${msg!=null}">
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"
+                            aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <strong th:text = "${msg}">Message</strong>
                 </div>
-                <label class="col-sm-2 control-label">Training Type:</label>
-                <div class="col-sm-10">
-                    <select class="form-control" th:field="*{type}" th:required="required">
-                        <option value="yoga">yoga</option>
-                        <option value="kickboxing">kickboxing</option>
-                        <option value="Weights">Weights</option>
-                    </select>
-                </div>
-                <label class="col-sm-2 control-label">Training Details:</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" th:field="*{details}" th:required="required"/>
-                </div>
-            <div class="row" style="margin: 0px;">
-                <button type="submit" class="btn btn-default">Submit</button>
             </div>
+
+            <h2>Add Training Type</h2>
+            <div>
+                <form class="form-horizontal" th:object="${trainTypeForm}" th:action="@{/trainTypeSubmit}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-3 control-label">Name: </label>
+                        <div class="col-sm-4">
+                            <input class="form-control" th:field="*{name}" placeholder="Training Type Name" required = "required"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-3 control-label">Type : </label>
+                        <div class="col-sm-4">
+                            <input class="form-control" th:field = "*{type}" name="type" placeholder="Type of Training" required = "required"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12">
+                        <label class="col-sm-3 control-label">Description : </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" th:field = "*{details}" name="details" placeholder="Description of Training Type" required = "required"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-info">Submit</button>
+                        <a href="/admintrainingmanagement" class="btn btn-default" role="button">Cancel</a>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
-
 </body>
 </html>

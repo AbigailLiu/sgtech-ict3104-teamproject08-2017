@@ -13,6 +13,7 @@
         });
     </script>
 
+
 </head>
 
 <body>
@@ -32,9 +33,9 @@
 
             <form th:action="@{/monitorWeb/new}" method="post">
                 <div class="form-group">
-                    <div class="col-sm-4 headerLeft"><h2>Monitors</h2></div>
+                    <div class="col-sm-4" style="float:left; padding-left: 0px;"><h2>Accounts Management</h2></div>
                     <div class="col-sm-8">
-                        <button type="submit" class="btn btn-primary pull-right buttonCenter"><i class="glyphicon glyphicon-plus"></i> Create a New Monitor</button>
+                        <button type="submit" class="btn btn-primary pull-right buttonCenter"><i class="glyphicon glyphicon-plus"></i> Create New Account</button>
                     </div>
                 </div>
             </form>
@@ -45,18 +46,18 @@
                     <tr>
                         <th>User Name</th>
                         <th>Account Role</th>
-                        <th>Last Updated</th>
                         <th>Account Status</th>
-                        <th class="sorting-disabled"></th>
-                        <th class="sorting-disabled"></th>
+                        <th>Last Updated</th>
+                        <th style=" background-image: none;"></th>
+                        <th style=" background-image: none;"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="user : ${users}">
                         <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.username}">Username</td>
                         <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.trole}">Account Role</td>
+                        <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.accountStatus}" th:id="${user.accountStatus}">Account Status</td>
                         <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.lastUpdated}">Last Updated</td>
-                        <td th:if="${user.accountStatus != 'DELETED'}" th:text = "${user.accountStatus}">Account Status</td>
                         <td th:if="${user.accountStatus != 'DELETED'}">
                             <form th:action="${'/home/edit/' + user.id}">
                                 <input type="submit" class="btn btn-warning btn-block" value="Edit"/>

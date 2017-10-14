@@ -27,12 +27,22 @@ public class RestClient {
     @GET
     @Path("/register/checkusername/{username}")
     public Response checkUsername(@PathParam("username") String username){
-//        System.out.println(username);
         User user  = userService.findByUsername(username.toLowerCase());
         if (user == null){
             return Response.status(201).entity("pass").build();
         }else{
             return Response.status(201).entity("fail").build();
+        }
+    }
+
+    @GET
+    @Path("/register/checkemail/{email}")
+    public Response checkEmail(@PathParam("email") String email){
+        User user  = userService.findByEmail(email.toLowerCase());
+        if (user == null){
+            return Response.status(201).entity("fail").build();
+        }else{
+            return Response.status(201).entity("pass").build();
         }
     }
 }

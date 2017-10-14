@@ -8,6 +8,7 @@ import com.lifestyle.stps.Repositories.TrainingTypeRepository;
 import com.lifestyle.stps.entities.*;
 
 import com.lifestyle.stps.services.RoleService;
+import com.lifestyle.stps.services.TrainingTypeService;
 import com.lifestyle.stps.services.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.List;
 @Component
 public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     private ProductRepository productRepository;
-    private TrainingTypeRepository trainingTypeRepo;
+    private TrainingTypeService trainingTypeService;
     private PersonalCalRepository personalCalRepo;
     private UserService userService;
     private RoleService roleService;
@@ -38,8 +39,8 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
 
     //For Training Type
     @Autowired
-    public void setTrainingTypeRepository(TrainingTypeRepository trainingTypeRepo) {
-        this.trainingTypeRepo = trainingTypeRepo;
+    public void setTrainingTypeService(TrainingTypeService trainingTypeService) {
+        this.trainingTypeService = trainingTypeService;
     }
 
     //For Personal Calendar
@@ -94,30 +95,29 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
 
     private void loadUsers() {
         User user1 = new User();
-        user1.setid(1);
         user1.setUsername("user");
         user1.setPassword("user");
         user1.setAccountStatus("APPROVED");
+        user1.setTrole("TRAINEE");
         userService.saveOrUpdate(user1);
 
         User user2 = new User();
-        user2.setid(2);
         user2.setUsername("admin");
         user2.setPassword("admin");
         user2.setAccountStatus("APPROVED");
+        user2.setTrole("ADMIN");
         userService.saveOrUpdate(user2);
 
         User user3 = new User();
-        user3.setid(3);
         user3.setUsername("trainer1");
         user3.setPassword("trainer1");
+        user3.setTrole("TRAINER");
         user3.setAccountStatus("APPROVED");
         Role role = roleService.findByRole("TRAINER");
         user3.addRole(role);
         userService.saveOrUpdate(user3);
 
         User user4= new User();
-        user4.setid(4);
         user4.setUsername("mich");
         user4.setPassword("mich");
         user4.setEmail("mich@gmail.com");
@@ -126,8 +126,10 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
         user4.setDay(1);
         user4.setMonth(12);
         user4.setPhoneNumber(123456);
+        user4.setAccountStatus("APPROVED");
         user4.setGender("Others");
         user4.setCountry("Tiongland");
+        user4.setTrole("TRAINEE");
         user4.setHomeAddress("Changchun");
         user4.setPostalCode(123456);
         userService.saveOrUpdate(user4);
@@ -202,18 +204,20 @@ public class Loader implements ApplicationListener<ContextRefreshedEvent> {
     //Load Training Type
     private void loadTrainingType() {
         TrainingType tt1 = new TrainingType();
-        tt1.setType("Yoga");
+        tt1.setType("Meditation");
         tt1.setId(1);
-        tt1.setName("H20");
-        tt1.setDetails("Mon night @ 2pm ");
+        tt1.setName("Yoga");
+        tt1.setDetails("Rejuvenate your body with lots of stretching exercise. Keeping your mind in piece");
 
         tt1.setType("Testing 1");
 
         TrainingType tt2 = new TrainingType();
-        tt2.setType("Testing 2");
+        tt2.setName("Jogging");
+        tt2.setDetails("Training of stamina and keeping fit.");
+        tt2.setType("Cardiology");
 
-        trainingTypeRepo.save(tt1);
-        trainingTypeRepo.save(tt2);
+        trainingTypeService.saveTrainingType(tt1);
+        trainingTypeService.saveTrainingType(tt2);
         log.info("Saved Training Type - id: " + tt1.getId());
         log.info("Saved Training Type - id: " + tt2.getId());
     }

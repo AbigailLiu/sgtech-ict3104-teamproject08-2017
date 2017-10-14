@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 public class User extends AbstractDomainClass {
     private String username;
-    private int id;
+
     @Transient
     private String password;
 
@@ -43,8 +43,7 @@ public class User extends AbstractDomainClass {
     public String getUsername() {
         return username;
     }
-    public void setid(int id){this.id= id;}
-    public int getid() {return id;}
+
     public void setUsername(String username) {
         this.username = username;
     }

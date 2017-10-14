@@ -195,6 +195,27 @@ label {
     color: #fff;
     background-color: #2D3B55;
 }
+
+.btn-submit {
+    outline: none;
+    font-size: 14px;
+    height: auto;
+    font-weight: normal;
+    padding: 14px 0;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 0px;
+    box-shadow: none;
+    color: #fff;
+    background-color: #2D3B55;
+}
+
+.btn-submit:hover,
+.btn-submit:focus {
+    color: #2D3B55;
+    background-color: #E8E9EC;
+}
+
 .forgot-password {
     text-decoration: underline;
     color: #888;

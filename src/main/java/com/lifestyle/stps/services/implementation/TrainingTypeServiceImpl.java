@@ -6,6 +6,8 @@ import com.lifestyle.stps.services.TrainingTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class TrainingTypeServiceImpl implements TrainingTypeService {
     private TrainingTypeRepository trainingtRepo;
@@ -29,5 +31,17 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
     public TrainingType saveTrainingType(TrainingType tt) {
         return trainingtRepo.save(tt);
     }
+
+    @Override
+    public TrainingType findByName(String name) {
+        return trainingtRepo.findByName(name);
+    }
+
+    @Transactional
+    @Override
+    public void deleteTraining(Integer id) {
+        trainingtRepo.delete(id);
+    }
+
 
 }

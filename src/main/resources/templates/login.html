@@ -16,10 +16,35 @@
                 var response = xhttp.responseText;
                 if (response == "fail"){
                     document.getElementById("divformcheck").style.display = "block";
+                    document.getElementById("register-submit").disabled = true;
                     document.getElementById("formcheck").innerText = "Username already in used.";
                 }else{
+                    document.getElementById("formcheck").innerText = "";
                     document.getElementById("divformcheck").style.display="none";
+                    document.getElementById("register-submit").disabled = false;
                 }
+            }
+        }
+
+        function checkEmail() {
+            var input = document.getElementById("em").value;
+            if (input.length > 9){
+                var xhttp = new XMLHttpRequest();
+                var target = "/jersey/rest/register/checkemail/"+input;
+                xhttp.open("GET", target , false);
+                xhttp.send();
+                var response = xhttp.responseText;
+                if (response == "pass"){
+                    document.getElementById("register-submit").disabled = true;
+                    document.getElementById("divemailcheck").style.display = "block";
+                    document.getElementById("emailcheck").innerText = "Invalid email entered. Proceed to registration.";
+                }else{
+                    document.getElementById("register-submit").disabled = false;
+                    document.getElementById("divemailcheck").style.display="none";
+                }
+            }else{
+                document.getElementById("register-submit").disabled = true;
+                document.getElementById("divemailcheck").style.display="none";
             }
         }
     </script>
@@ -48,18 +73,20 @@
                                 <div class="form-group">
                                     <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password" required="required"/>
                                 </div>
-                                <div class="col-xs-6 form-group pull-left checkbox">
-                                    <input id="checkbox1" type="checkbox" name="remember"/>
-                                    <label for="checkbox1">Remember Me</label>
+                                <div class="col-xs-6 form-group pull-left" style="padding-top:2%;">
+                                    <a href="#" th:href="@{/forgetpassword}">Forget Password?</a>
                                 </div>
                                 <div class="col-xs-6 pull-right">
                                     <input type="submit" name="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In"/>
                                 </div>
                             </form>
-                            <form id="register-form" th:object="${user}" th:action="@{/newRegister}" method="post" role="form" style="display: none;">
+                            <form id="register-form" th:object="${user}" th:action="@{/register}" method="post" role="form" style="display: none;">
                                 <div>
                                     <div id="divformcheck" class="alert alert-danger" role="alert" style="display: none;">
                                         <p id="formcheck">Hello</p>
+                                    </div>
+                                    <div id="divemailcheck" class="alert alert-danger" role="alert" style="display: none;">
+                                        <p id="emailcheck">Hello</p>
                                     </div>
                                 </div>
                                 <h2>REGISTER</h2>
@@ -84,7 +111,7 @@
                                     <input type="text" name="username" id="un" tabindex="4" class="form-control" placeholder="Username" th:field="*{username}" onblur="checkUsername()" required="required"/>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" name="email" id="email" tabindex="5" class="form-control" placeholder="Email Address" th:field="*{email}" required="required"/>
+                                    <input type="email" name="email" id="em" tabindex="5" class="form-control" placeholder="Email Address" th:field="*{email}" onkeyup="checkEmail()" required="required"/>
                                 </div>
                                 <div class="form-group">
                                     <input type="password" name="password" id="pw" tabindex="6" class="form-control" placeholder="Password" th:field="*{password}" required="required"/>

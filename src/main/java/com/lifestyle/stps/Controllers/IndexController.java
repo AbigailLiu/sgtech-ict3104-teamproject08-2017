@@ -1,5 +1,7 @@
 package com.lifestyle.stps.Controllers;
 
+import com.lifestyle.stps.algorithms.RandomString;
+import com.lifestyle.stps.algorithms.holder.RSEmail;
 import com.lifestyle.stps.entities.PersonalCalendar;
 import com.lifestyle.stps.entities.Product;
 import com.lifestyle.stps.entities.TrainingType;
@@ -11,6 +13,7 @@ import com.lifestyle.stps.Repositories.NotificationRepository;
 import com.lifestyle.stps.entities.*;
 import com.lifestyle.stps.services.*;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import org.apache.log4j.Logger;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.jws.WebParam;
+import java.security.SecureRandom;
 import java.util.List;
 
 /**
@@ -32,6 +36,8 @@ import java.util.List;
  */
 @Controller
 public class IndexController {
+
+    private Logger log = Logger.getLogger(IndexController.class);
 
     private ProductService productService;
     private UserService userService;
@@ -63,31 +69,31 @@ public class IndexController {
         this.TTypeService = trainingTypeService;
     }
 
-
-//    @Autowired
-//    private JavaMailSender mailSender;
-//    public void sendSimpleMail(String inputEmail) throws Exception {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom("ict3104scrum@gmail.com");
-//        message.setTo(inputEmail);
-//        message.setSubject(" CONGRATULATIONS ");
-//        message.setText(" you are registered! ");
-//        mailSender.send(message);
-//    }
-    @RequestMapping("/")
-    String index(){
-//        try {
-//            sendSimpleMail("micgohsl94@gmail.com");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return "userregisteredemail";
-            return "index";
-    }
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Autowired
     public void setMyCalService(PersonalCalService myPersonalCalService){
         this.MyCalService = myPersonalCalService;
+    }
+
+    public void sendSimpleMail(String inputEmail, String subject, String content) throws Exception {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("ict3104scrum@gmail.com");
+        message.setTo(inputEmail);
+        message.setSubject(subject);
+        message.setText(content);
+        mailSender.send(message);
+    }
+
+    @RequestMapping("/")
+    String index(){
+        return "index";
+    }
+
+    @RequestMapping("/registercomplete")
+    public String registercomplete(){
+        return "/registercomplete";
     }
 
     @RequestMapping(value = "/login", method = {RequestMethod.POST, RequestMethod.GET})
@@ -154,12 +160,18 @@ public class IndexController {
 
     //After the users click submit
     @RequestMapping(value = "trainTypeSubmit", method = RequestMethod.POST)
-    public String addTrainingType(TrainingType trainingType){
+    public String addTrainingType(TrainingType trainingType, final RedirectAttributes redirectAttributes){
+
+        TrainingType type = TTypeService.findByName(trainingType.getName());
+        if (type == null){
+            TTypeService.saveTrainingType(trainingType);
+        }else{
+            redirectAttributes.addFlashAttribute("msg", "Creation unsuccessful. Existing Training Type already exist.");
+            return "redirect:/trainingType/new";
+        }
 
 
-        TTypeService.saveTrainingType(trainingType);
-
-        return "redirect:/trainingType/" + trainingType.getId();
+        return "redirect:/admintrainingmanagement";
     }
 
     //Get particular training type
@@ -227,25 +239,37 @@ public class IndexController {
         return "admindashboard";
     }
 
-
-
-    @RequestMapping(value = "/newRegister", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String createNewRegister(User user) {
-        String srole = user.getTrole();
-        Role role = roleService.findByRole(srole.toUpperCase());
-        user.addRole(role);
-        userService.saveOrUpdate(user);
-        Notification notification = new Notification();
-        notification.setDescription("Awaiting Account Approval: " + user.getUsername());
-        notification.setNotificationType("Account Request");
-        notification.setRefId(user.getId());
-        notificationService.saveNotification(notification);
-        return "redirect:/admindashboard";
+        try{
+            String srole = user.getTrole();
+            user.setTrole(srole.toUpperCase());
+            Role role = roleService.findByRole(srole.toUpperCase());
+            user.addRole(role);
+            userService.saveOrUpdate(user);
+            Notification notification = new Notification();
+            notification.setDescription("Awaiting Account Approval: " + user.getUsername());
+            notification.setNotificationType("Account Request");
+            notification.setRefId(user.getId());
+            notificationService.saveNotification(notification);
+            sendSimpleMail(user.getEmail(),"LifeStyle STPS Account Verification", "Thank you for joining STPS. Our administrator will be reviewing your account and get back to you shortly. Thank you for you patience. Cheers!");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "redirect:/registercomplete";
     }
 
     @RequestMapping(value = "/adminaccountmanagement", method = RequestMethod.GET)
     public String listUser(Model model){
         List<User> users = (List<User>) userService.listAll();
+        for (int i = 0; i < users.size(); i++){
+            if (users.get(i).getAccountStatus().equals("DELETED")){
+                users.remove(i);
+            }
+        }
+        if (users.size() == 0){
+            users = null;
+        }
         model.addAttribute("users",users);
         return "adminaccountmanagement";
     }
@@ -288,7 +312,44 @@ public class IndexController {
     public String deleteAccount(@PathVariable("id") Integer id){
         User user = userService.getById(id);
         user.setEnabled(Boolean.FALSE);
+        user.setAccountStatus("DELETED");
         userService.saveOrUpdate(user);
         return "redirect:/adminaccountmanagement";
+    }
+
+    @RequestMapping(value = "/admintrainingmanagement")
+    public String listTraining(Model model){
+        model.addAttribute("types", TTypeService.listAllTType());
+        return "admintrainingmanagement";
+    }
+
+    @RequestMapping(value="trainingtypedelete/{id}")
+    public String deleteTrainingType(@PathVariable("id") Integer id){
+        TTypeService.deleteTraining(id);
+        return "redirect:/admintrainingmanagement";
+    }
+
+    @RequestMapping(value="/forgetpassword")
+    public String redirectForget(Model model){
+        RSEmail rsEmail = new RSEmail();
+        model.addAttribute("model", rsEmail);
+        return "forgetpassword";
+    }
+
+    @RequestMapping(value = "/sendReset", method = RequestMethod.POST)
+    public String sendReset(RSEmail rsEmail){
+
+        try{
+            User user = userService.findByEmail(rsEmail.getEmail());
+            String easy = RandomString.digits + "ACEFGHJKLMNPQRUVWXYabcdefhijkprstuvwx";
+            RandomString tickets = new RandomString(23, new SecureRandom(), easy);
+            String password = tickets.nextString();
+            user.setPassword(password);
+            userService.saveOrUpdate(user);
+            sendSimpleMail(user.getEmail(),"LifeStyle STPS Account Password Reset", "The password for the account with the username, "+ user.getUsername()+" has been reset.\nYour temporary password is "+password+" \nPlease change your password after logging in. \nCheers!\n\n LifeStyle STPS Administration Team");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "redirect:/login";
     }
 }

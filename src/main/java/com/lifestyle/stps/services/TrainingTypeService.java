@@ -11,4 +11,8 @@ public interface TrainingTypeService {
     TrainingType getTrainingTypeID(Integer id);
 
     TrainingType saveTrainingType(TrainingType trainingType);
+
+    TrainingType findByName(String name);
+
+    void deleteTraining(Integer id);
 }

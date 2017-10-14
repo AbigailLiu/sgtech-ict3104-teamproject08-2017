@@ -2,15 +2,14 @@ body{
     height:100%;
 }
 
-input[type=submit] {
-    background:none!important;
-    border:none;
-    padding:0!important;
-    color: blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-
+/*input[type=submit] {*/
+    /*background:none!important;*/
+    /*border:none;*/
+    /*padding:0!important;*/
+    /*color: blue;*/
+    /*text-decoration: underline;*/
+    /*cursor:pointer;*/
+/*}*/
 
 .usercreateform{
     width: 600px;
@@ -54,6 +53,22 @@ select#usercreategender {
 }
 
 .topspace {
-    margin-top: 5%;
-    padding-top: 5%;
+    margin-top: 2%;
+}
+
+.headerLeft{
+    float: left;
+    padding-left: 0;
+}
+
+#APPROVED{
+    background-color: lightgreen;
+}
+
+#PENDING{
+    background-color: yellow;
+}
+
+.main{
+    padding-top: 20px;
 }
