@@ -42,7 +42,11 @@ public class RestClient {
         if (user == null){
             return Response.status(201).entity("fail").build();
         }else{
-            return Response.status(201).entity("pass").build();
+            if (user.getAccountStatus().equals("PENDING")){
+                return Response.status(201).entity("fail").build();
+            }else{
+                return Response.status(201).entity("pass").build();
+            }
         }
     }
 }
